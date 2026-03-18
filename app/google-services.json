@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "464732697983",
+    "project_id": "huertocero-9ef32",
+    "storage_bucket": "huertocero-9ef32.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464732697983:android:91e0c02fee7843a650d64a",
+        "android_client_info": {
+          "package_name": "com.huertocero.huertocero"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArlo5Svu45eAfEbSyjHyhFMUBSlxUc45U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

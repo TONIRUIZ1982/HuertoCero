@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:allowBackup="true"
+        android:label="HuertoCero"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.HuertoCero">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBXA87ua9cM2yYa8ieFJT45h-1gxzVynMQ"/>
+
+        <activity android:name=".MapActivity"/>
+
+        <!-- 🔥 SOLO ESTE ES EL PRINCIPAL -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <activity android:name=".HomeActivity"/>
+        <activity android:name=".AddProductActivity"/>
+        <activity android:name=".MainActivity"/>
+
+    </application>
+
+</manifest>
