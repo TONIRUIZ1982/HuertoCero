@@ -6,27 +6,36 @@
     android:orientation="vertical"
     android:padding="24dp">
 
+    <!-- Nombre -->
     <EditText
         android:id="@+id/etTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre del producto"/>
+        android:hint="Nombre del producto" />
 
+    <!-- Descripción -->
     <EditText
         android:id="@+id/etDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Descripción"/>
+        android:hint="Descripción"
+        android:layout_marginTop="10dp" />
 
+    <!-- Precio -->
     <EditText
         android:id="@+id/etPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Precio"/>
+        android:hint="Precio"
+        android:inputType="numberDecimal"
+        android:layout_marginTop="10dp" />
 
+    <!-- Botón -->
     <Button
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Guardar producto"/>
+        android:text="Guardar producto"
+        android:layout_marginTop="20dp" />
+
 </LinearLayout>
