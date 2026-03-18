@@ -2,114 +2,81 @@ package com.huertocero.huertocero
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.huertocero.huertocero.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
-    private lateinit var db: FirebaseFirestore
+
+    override fun onStart() {
+        super.onStart()
+
+        // 🔥 LOGIN AUTOMÁTICO
+        val user = FirebaseAuth.getInstance().currentUser
+
+        if (user != null) {
+            startActivity(Intent(this, MapActivity::class.java))
+            finish()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_login)
 
         auth = FirebaseAuth.getInstance()
-        db = FirebaseFirestore.getInstance()
 
-        binding.btnLogin.setOnClickListener {
-            loginUser()
-        }
+        val etEmail = findViewById<EditText>(R.id.etEmail)
+        val etPassword = findViewById<EditText>(R.id.etPassword)
+        val btnLogin = findViewById<Button>(R.id.btnLogin)
+        val btnRegister = findViewById<Button>(R.id.btnRegister)
 
-        binding.btnRegister.setOnClickListener {
-            registerUser()
-        }
-    }
+        // LOGIN
+        btnLogin.setOnClickListener {
 
-    // 🔐 LOGIN
-    private fun loginUser() {
-        val email = binding.etEmail.text.toString().trim()
-        val password = binding.etPassword.text.toString().trim()
+            val email = etEmail.text.toString().trim()
+            val password = etPassword.text.toString().trim()
 
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-
-                    Toast.makeText(this, "Login correcto", Toast.LENGTH_SHORT).show()
-
-                    // 🔥 IR A HOME (NO MainActivity)
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    finish()
-
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Error login: ${task.exception?.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-    }
 
-    // 📝 REGISTRO
-    private fun registerUser() {
-        val email = binding.etEmail.text.toString().trim()
-        val password = binding.etPassword.text.toString().trim()
-
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-
-                    val user = auth.currentUser
-
-                    if (user != null) {
-                        saveUserToFirestore(user.uid, user.email!!)
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        startActivity(Intent(this, MapActivity::class.java))
+                        finish()
+                    } else {
+                        Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                     }
-
-                    Toast.makeText(this, "Usuario creado correctamente", Toast.LENGTH_SHORT).show()
-
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Error registro: ${task.exception?.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
                 }
-            }
-    }
+        }
 
-    // ☁️ FIRESTORE
-    private fun saveUserToFirestore(uid: String, email: String) {
+        // REGISTER
+        btnRegister.setOnClickListener {
 
-        val userMap = hashMapOf(
-            "uid" to uid,
-            "email" to email
-        )
+            val email = etEmail.text.toString().trim()
+            val password = etPassword.text.toString().trim()
 
-        db.collection("users")
-            .document(uid)
-            .set(userMap)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Usuario guardado en Firestore", Toast.LENGTH_SHORT).show()
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Error Firestore", Toast.LENGTH_SHORT).show()
+
+            if (password.length < 6) {
+                Toast.makeText(this, "Mínimo 6 caracteres", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener {
+                    Toast.makeText(this, "Usuario creado", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 }

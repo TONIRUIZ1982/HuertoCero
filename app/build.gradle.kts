@@ -49,4 +49,6 @@ dependencies {
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
 }

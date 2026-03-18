@@ -44,7 +44,9 @@ class AddProductActivity : AppCompatActivity() {
             "title" to title,
             "description" to description,
             "price" to price,
-            "userId" to user?.uid
+            "userId" to user?.uid,
+            "lat" to 39.4699,
+            "lng" to -0.3763
         )
 
         db.collection("products")

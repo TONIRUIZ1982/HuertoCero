@@ -20,16 +20,15 @@
 
     <EditText
         android:id="@+id/etPrice"
-        android:hint="Precio"
+        android:hint="Precio (€)"
         android:inputType="numberDecimal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <Button
-        android:id="@+id/btnSave"
-        android:text="Guardar"
+        android:id="@+id/btnSelectImage"
+        android:text="Seleccionar imagen"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"/>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
