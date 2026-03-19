@@ -12,6 +12,7 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -33,11 +34,24 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(R.layout.activity_map)
 
         val btnLogout = findViewById<Button>(R.id.btnLogout)
+        val btnFavorites = findViewById<Button?>(R.id.btnFavorites)
+        val btnReservations = findViewById<Button?>(R.id.btnReservations)
 
+        // 🔴 LOGOUT
         btnLogout.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
+        }
+
+        // ❤️ FAVORITOS
+        btnFavorites?.setOnClickListener {
+            startActivity(Intent(this, FavoritesActivity::class.java))
+        }
+
+        // 📦 RESERVAS
+        btnReservations?.setOnClickListener {
+            startActivity(Intent(this, ReservationsActivity::class.java))
         }
 
         val mapFragment = supportFragmentManager
@@ -52,12 +66,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         val valencia = LatLng(39.4699, -0.3763)
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(valencia, 12f))
 
-        // 👉 Crear producto
         map.setOnMapClickListener { latLng ->
             showAddProductDialog(latLng)
         }
 
-        // 👉 Ver producto
         map.setOnMarkerClickListener { marker ->
             val product = marker.tag as? Product ?: return@setOnMarkerClickListener false
             showProductDialog(product)
@@ -69,23 +81,28 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun loadProducts() {
         db.collection("products").get().addOnSuccessListener { result ->
+
+            map.clear()
+
             for (doc in result) {
+
                 val product = doc.toObject(Product::class.java)
                 product.id = doc.id
 
                 if (product.lat != null && product.lng != null) {
+
                     val marker = map.addMarker(
                         MarkerOptions()
                             .position(LatLng(product.lat!!, product.lng!!))
-                            .title(product.name)
+                            .title(product.name ?: "Producto")
                     )
+
                     marker?.tag = product
                 }
             }
         }
     }
 
-    // 🟢 CREAR PRODUCTO
     private fun showAddProductDialog(latLng: LatLng) {
 
         selectedImageUri = null
@@ -106,59 +123,67 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             .setView(view)
             .setPositiveButton("Guardar", null)
             .setNegativeButton("Cancelar", null)
-            .setNeutralButton("Añadir otro", null)
             .create()
 
         dialog.setOnShowListener {
 
             val btnGuardar = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            val btnOtro = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
 
-            // 👉 GUARDAR Y CERRAR
             btnGuardar.setOnClickListener {
 
-                val product = Product(
-                    name = name.text.toString(),
-                    description = desc.text.toString(),
-                    price = price.text.toString().toDoubleOrNull() ?: 0.0,
-                    lat = latLng.latitude,
-                    lng = latLng.longitude,
-                    imageUrl = selectedImageUri?.toString() ?: ""
-                )
+                val storageRef = FirebaseStorage.getInstance().reference
 
-                db.collection("products").add(product)
+                if (selectedImageUri != null) {
 
-                Toast.makeText(this, "Producto guardado", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-            }
+                    val fileName = "images/${System.currentTimeMillis()}.jpg"
+                    val imageRef = storageRef.child(fileName)
 
-            // 👉 GUARDAR Y SEGUIR AÑADIENDO
-            btnOtro.setOnClickListener {
+                    imageRef.putFile(selectedImageUri!!)
+                        .continueWithTask { task ->
+                            if (!task.isSuccessful) throw task.exception!!
+                            imageRef.downloadUrl
+                        }
+                        .addOnSuccessListener { uri ->
 
-                val product = Product(
-                    name = name.text.toString(),
-                    description = desc.text.toString(),
-                    price = price.text.toString().toDoubleOrNull() ?: 0.0,
-                    lat = latLng.latitude,
-                    lng = latLng.longitude,
-                    imageUrl = selectedImageUri?.toString() ?: ""
-                )
+                            val product = Product(
+                                name = name.text.toString(),
+                                description = desc.text.toString(),
+                                price = price.text.toString().toDoubleOrNull() ?: 0.0,
+                                lat = latLng.latitude,
+                                lng = latLng.longitude,
+                                imageUrl = uri.toString()
+                            )
 
-                db.collection("products").add(product)
+                            db.collection("products").add(product)
 
-                Toast.makeText(this, "Producto añadido", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Producto guardado", Toast.LENGTH_SHORT).show()
+                            loadProducts()
+                            dialog.dismiss()
+                        }
 
-                name.setText("")
-                desc.setText("")
-                price.setText("")
-                selectedImageUri = null
+                } else {
+
+                    val product = Product(
+                        name = name.text.toString(),
+                        description = desc.text.toString(),
+                        price = price.text.toString().toDoubleOrNull() ?: 0.0,
+                        lat = latLng.latitude,
+                        lng = latLng.longitude,
+                        imageUrl = ""
+                    )
+
+                    db.collection("products").add(product)
+
+                    Toast.makeText(this, "Producto guardado", Toast.LENGTH_SHORT).show()
+                    loadProducts()
+                    dialog.dismiss()
+                }
             }
         }
 
         dialog.show()
     }
 
-    // 🔵 VER PRODUCTO
     private fun showProductDialog(product: Product) {
 
         val view = layoutInflater.inflate(R.layout.dialog_product, null)
@@ -169,6 +194,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         val price = view.findViewById<TextView>(R.id.tvPrice)
         val btnReserve = view.findViewById<Button>(R.id.btnReserve)
         val btnNavigate = view.findViewById<Button>(R.id.btnNavigate)
+        val btnFavorite = view.findViewById<Button>(R.id.btnFavorite)
 
         name.text = product.name
         desc.text = product.description
@@ -182,37 +208,47 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             .setView(view)
             .create()
 
-        // 👉 NAVEGAR
-        btnNavigate.setOnClickListener {
-            val uri = Uri.parse("google.navigation:q=${product.lat},${product.lng}")
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            intent.setPackage("com.google.android.apps.maps")
-            startActivity(intent)
-        }
+        // ❤️ FAVORITOS
+        btnFavorite.setOnClickListener {
 
-        // 👉 RESERVAR + ELIMINAR
-        btnReserve.setOnClickListener {
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setOnClickListener
 
             val data = hashMapOf(
                 "productId" to product.id,
+                "name" to product.name,
+                "price" to product.getPriceAsDouble()
+            )
+
+            db.collection("users")
+                .document(userId)
+                .collection("favorites")
+                .document(product.id)
+                .set(data)
+
+            Toast.makeText(this, "Añadido a favoritos ❤️", Toast.LENGTH_SHORT).show()
+        }
+
+        // 🗺️ NAVEGAR
+        btnNavigate.setOnClickListener {
+            val uri = Uri.parse("google.navigation:q=${product.lat},${product.lng}")
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
+        }
+
+        // 🛒 RESERVAR
+        btnReserve.setOnClickListener {
+
+            val data = hashMapOf(
                 "nombre" to product.name,
                 "precio" to product.getPriceAsDouble()
             )
 
-            // guardar reserva
             db.collection("reservas").add(data)
 
-            // 🔥 eliminar producto
-            db.collection("products")
-                .document(product.id)
-                .delete()
+            db.collection("products").document(product.id).delete()
 
             Toast.makeText(this, "Producto reservado", Toast.LENGTH_SHORT).show()
 
             dialog.dismiss()
-
-            // 🔄 refrescar mapa
-            map.clear()
             loadProducts()
         }
 
