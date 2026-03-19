@@ -1,12 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment
+    <!--
+        Fixed the following issues:
+        1. Moved the XML declaration to the first line (it was incorrectly placed inside the root element).
+        2. Replaced the <fragment> tag with <androidx.fragment.app.FragmentContainerView>,
+           which is the recommended way to include fragments in layouts.
+        3. Added tools:layout to resolve the "Unknown fragments" preview warning,
+           allowing the Layout Editor to show a placeholder.
+    -->
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:layout="@layout/activity_main" />
 
     <Button
         android:id="@+id/btnLogout"

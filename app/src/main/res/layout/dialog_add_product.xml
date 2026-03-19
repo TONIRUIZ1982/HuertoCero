@@ -1,13 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="16dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:padding="20dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <EditText
-        android:id="@+id/etTitle"
+        android:id="@+id/etName"
         android:hint="Nombre del producto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -26,7 +24,7 @@
         android:layout_height="wrap_content"/>
 
     <Button
-        android:id="@+id/btnSelectImage"
+        android:id="@+id/btnImage"
         android:text="Seleccionar imagen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

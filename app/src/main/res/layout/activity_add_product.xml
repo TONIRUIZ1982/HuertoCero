@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="16dp"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
 
     <EditText
-        android:id="@+id/etTitle"
-        android:hint="Nombre del producto"
+        android:id="@+id/etName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:hint="Nombre del producto" />
 
     <EditText
         android:id="@+id/etDescription"
-        android:hint="Descripción"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:hint="Descripción"
+        android:layout_marginTop="10dp" />
 
     <EditText
         android:id="@+id/etPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:hint="Precio"
         android:inputType="numberDecimal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_marginTop="10dp" />
 
     <Button
         android:id="@+id/btnSave"
-        android:text="Guardar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"/>
+        android:text="Guardar producto"
+        android:layout_marginTop="20dp" />
 
 </LinearLayout>

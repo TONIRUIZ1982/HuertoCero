@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.huertocero.huertocero">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 🌐 PERMISO INTERNET -->
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
+        android:allowBackup="true"
         android:label="HuertoCero"
-        android:theme="@style/Theme.Material3.DayNight">
+        android:supportsRtl="true"
+        android:theme="@style/Theme.HuertoCero">
 
+        <!-- 🗺️ GOOGLE MAPS API KEY -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBXA87ua9cM2yYa8ieFJT45h-1gxzVynMQ"/>
+
+        <!-- Activities -->
+        <activity android:name=".DetailActivity"/>
+        <activity android:name=".AddProductActivity"/>
+        <activity android:name=".MapActivity"/>
 
         <activity
             android:name=".LoginActivity"
@@ -22,8 +30,6 @@
             </intent-filter>
 
         </activity>
-
-        <activity android:name=".MapActivity"/>
 
     </application>
 
