@@ -132,7 +132,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 dialog.dismiss()
             }
 
-            // 👉 GUARDAR Y SEGUIR
+            // 👉 GUARDAR Y SEGUIR AÑADIENDO
             btnOtro.setOnClickListener {
 
                 val product = Product(
@@ -148,7 +148,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 Toast.makeText(this, "Producto añadido", Toast.LENGTH_SHORT).show()
 
-                // limpiar campos
                 name.setText("")
                 desc.setText("")
                 price.setText("")
@@ -183,6 +182,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             .setView(view)
             .create()
 
+        // 👉 NAVEGAR
         btnNavigate.setOnClickListener {
             val uri = Uri.parse("google.navigation:q=${product.lat},${product.lng}")
             val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -190,6 +190,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             startActivity(intent)
         }
 
+        // 👉 RESERVAR + ELIMINAR
         btnReserve.setOnClickListener {
 
             val data = hashMapOf(
@@ -198,10 +199,21 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 "precio" to product.getPriceAsDouble()
             )
 
+            // guardar reserva
             db.collection("reservas").add(data)
 
-            Toast.makeText(this, "Reservado", Toast.LENGTH_SHORT).show()
+            // 🔥 eliminar producto
+            db.collection("products")
+                .document(product.id)
+                .delete()
+
+            Toast.makeText(this, "Producto reservado", Toast.LENGTH_SHORT).show()
+
             dialog.dismiss()
+
+            // 🔄 refrescar mapa
+            map.clear()
+            loadProducts()
         }
 
         dialog.show()
