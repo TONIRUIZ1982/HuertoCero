@@ -242,6 +242,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 "precio" to product.getPriceAsDouble()
             )
 
+            // guardar reserva
             db.collection("reservas").add(data)
 
             db.collection("products").document(product.id).delete()
