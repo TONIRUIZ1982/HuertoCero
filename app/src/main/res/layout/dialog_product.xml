@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <!-- Flechas -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,24 +34,21 @@
             android:src="@android:drawable/ic_media_next" />
     </LinearLayout>
 
+    <!-- Imagen -->
     <ImageView
         android:id="@+id/imgProduct"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:scaleType="centerCrop" />
 
+    <!-- Favoritos -->
     <Button
         android:id="@+id/btnFavorite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="❤️ Añadir a favoritos" />
 
-    <Button
-        android:id="@+id/btnFavorite"
-        android:text="❤️ Añadir a favoritos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
+    <!-- Nombre -->
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
@@ -58,17 +56,20 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
+    <!-- Precio -->
     <TextView
         android:id="@+id/tvPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#4CAF50" />
 
+    <!-- Descripción -->
     <TextView
         android:id="@+id/tvDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <!-- Botones -->
     <Button
         android:id="@+id/btnNavigate"
         android:layout_width="match_parent"

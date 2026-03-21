@@ -6,7 +6,7 @@
 
     <EditText
         android:id="@+id/etName"
-        android:hint="Nombre del producto"
+        android:hint="Nombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -18,7 +18,7 @@
 
     <EditText
         android:id="@+id/etPrice"
-        android:hint="Precio (€)"
+        android:hint="Precio"
         android:inputType="numberDecimal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
