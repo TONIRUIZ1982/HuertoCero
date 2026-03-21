@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("com.google.firebase:firebase-storage-ktx")
 
     // Firebase
     implementation(platform(libs.firebase.bom))
@@ -56,6 +57,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("com.github.bumptech.glide:glide:4.15.1")
+    implementation("com.google.firebase:firebase-storage-ktx")
 
     // Testing
     testImplementation(libs.junit)
