@@ -1,48 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!-- MAPA -->
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- BOTÓN LOGOUT -->
+    <!-- BOTONES SUPERIORES -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="top"
+        android:padding="8dp">
+
+        <Button
+            android:id="@+id/btnFavorites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Favoritos"/>
+
+        <Button
+            android:id="@+id/btnReservations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reservas"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <!-- LOGOUT -->
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Salir"
         android:layout_gravity="top|end"
-        android:layout_margin="16dp"
-        android:background="@drawable/button_style"
-        android:textColor="@android:color/white"/>
+        android:layout_margin="8dp"/>
 
-    <!-- BOTÓN FAVORITOS -->
-    <Button
-        android:id="@+id/btnFavorites"
-        android:layout_width="wrap_content"
+    <!-- BOTTOM SHEET -->
+    <include
+        android:id="@+id/bottomSheet"
+        layout="@layout/bottom_sheet_product"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="❤️"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:background="@drawable/button_style"
-        android:textColor="@android:color/white"/>
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
 
-    <!-- BOTÓN RESERVAS -->
-    <Button
-        android:id="@+id/btnReservations"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="📦"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="80dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/button_style"
-        android:textColor="@android:color/white"/>
-
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -2,10 +2,17 @@
 
     <style name="Theme.HuertoCero" parent="Theme.Material3.DayNight.NoActionBar">
 
+        <!-- Colores principales -->
         <item name="colorPrimary">#4CAF50</item>
         <item name="colorOnPrimary">#FFFFFF</item>
 
+        <item name="colorSecondary">#8BC34A</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+
         <item name="android:statusBarColor">?attr/colorPrimary</item>
+
+        <!-- Estilo general -->
+
 
     </style>
 
