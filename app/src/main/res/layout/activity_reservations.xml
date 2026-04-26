@@ -1,28 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/auth_background"
+    android:orientation="vertical"
+    android:padding="18dp">
 
     <Button
         android:id="@+id/btnBack"
-        android:text="← Volver"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="120dp"
+        android:layout_height="54dp"
+        android:background="@drawable/button_secondary"
+        android:text="Volver"
+        android:textAllCaps="false"
+        android:textColor="@color/brand_olive"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="Reservas"
+        android:textColor="@color/ink"
+        android:textSize="28sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvEmpty"
-        android:text="No tienes reservas"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:text="No tienes reservas"
+        android:textColor="@color/muted_ink"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <ListView
         android:id="@+id/listReservations"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"/>
-
+        android:layout_height="0dp"
+        android:layout_marginTop="14dp"
+        android:layout_weight="1"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp" />
 </LinearLayout>

@@ -1,77 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@drawable/auth_background"
+    android:fillViewport="true"
+    android:overScrollMode="never">
 
-    <!-- CONTENEDOR CENTRADO -->
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/loginContent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:padding="24dp">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="36dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="32dp">
 
-        <!-- TARJETA -->
-        <LinearLayout
-            android:orientation="vertical"
+        <ImageView
+            android:id="@+id/logoMark"
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/logo_huerto_cero" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="HuertoCero"
+            android:textColor="@color/ink"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:padding="20dp"
-            android:elevation="8dp">
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:text="Productos frescos, reservas rapidas y venta directa desde el huerto."
+            android:textColor="@color/muted_ink"
+            android:textSize="15sp" />
 
-            <!-- TÍTULO -->
+        <ImageView
+            android:id="@+id/heroIllustration"
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:layout_marginTop="18dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/login_hero_description"
+            android:scaleType="fitCenter"
+            android:src="@drawable/auth_hero_market" />
+
+        <LinearLayout
+            android:id="@+id/authCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/auth_card_background"
+            android:elevation="12dp"
+            android:orientation="vertical"
+            android:padding="22dp">
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="HuertoCero 🌱"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_marginBottom="20dp"/>
+                android:fontFamily="sans-serif-medium"
+                android:text="Entra y empieza a vender mas cerca"
+                android:textColor="@color/ink"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-            <!-- EMAIL -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Accede a tu cuenta o crea una nueva en segundos."
+                android:textColor="@color/muted_ink"
+                android:textSize="14sp" />
+
             <EditText
                 android:id="@+id/etEmail"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Email"
-                android:padding="12dp"/>
+                android:layout_height="56dp"
+                android:layout_marginTop="20dp"
+                android:autofillHints="emailAddress"
+                android:background="@drawable/auth_input_background"
+                android:hint="Correo electronico"
+                android:inputType="textEmailAddress"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:singleLine="true"
+                android:textColor="@color/ink"
+                android:textColorHint="@color/muted_ink"
+                android:textSize="15sp" />
 
-            <!-- PASSWORD -->
             <EditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Contraseña"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:autofillHints="password"
+                android:background="@drawable/auth_input_background"
+                android:hint="Contrasena"
                 android:inputType="textPassword"
-                android:padding="12dp"
-                android:layout_marginTop="10dp"/>
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:singleLine="true"
+                android:textColor="@color/ink"
+                android:textColorHint="@color/muted_ink"
+                android:textSize="15sp" />
 
-            <!-- LOGIN -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Iniciar sesión"
+                android:layout_height="58dp"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/button_style"
-                android:textColor="@android:color/white"/>
+                android:text="Iniciar sesion"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/brand_olive"
+                app:cornerRadius="18dp"
+                app:icon="@android:drawable/ic_lock_idle_lock"
+                app:iconGravity="textStart"
+                app:iconPadding="10dp"
+                app:iconTint="@android:color/white" />
 
-            <!-- REGISTER -->
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRegister"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="10dp"
+                android:text="Crear cuenta"
+                android:textAllCaps="false"
+                android:textColor="@color/brand_olive"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="18dp"
+                app:icon="@android:drawable/ic_menu_add"
+                app:iconGravity="textStart"
+                app:iconPadding="10dp"
+                app:iconTint="@color/brand_olive"
+                app:strokeColor="#C9DFC2"
+                app:strokeWidth="1dp" />
+
+            <Button
+                android:id="@+id/btnPrivacy"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_secondary"
+                android:text="Privacidad y normas"
+                android:textAllCaps="false"
+                android:textColor="@color/brand_olive"
+                android:textStyle="bold" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Registrarse"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/button_style"
-                android:textColor="@android:color/white"/>
-
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="Compra local, reserva facil y conecta con productores reales."
+                android:textColor="@color/muted_ink"
+                android:textSize="12sp" />
         </LinearLayout>
-
     </LinearLayout>
-
-</FrameLayout>
+</ScrollView>

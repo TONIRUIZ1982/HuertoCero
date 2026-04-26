@@ -7,7 +7,8 @@ data class Product(
     var price: Any = "",
     var lat: Double? = null,
     var lng: Double? = null,
-    var imageUrl: String = ""
+    var imageUrl: String = "",
+    var sellerId: String = ""
 ) {
     fun getPriceAsDouble(): Double {
         return when (price) {

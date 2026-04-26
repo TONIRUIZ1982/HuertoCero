@@ -3,4 +3,12 @@
     <color name="green_dark">#2E7D32</color>
     <color name="green_light">#A5D6A7</color>
     <color name="background">#F1F8E9</color>
+    <color name="brand_olive">#274C2E</color>
+    <color name="brand_mint">#DFF5DC</color>
+    <color name="brand_lime">#89C64A</color>
+    <color name="brand_sun">#F6C65B</color>
+    <color name="ink">#17251B</color>
+    <color name="muted_ink">#667467</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="brand_red">#D84A3A</color>
 </resources>

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">HuertoCero</string>
+    <string name="login_hero_description">Mercado de productos frescos de HuertoCero</string>
 </resources>

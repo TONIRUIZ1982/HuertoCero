@@ -1,48 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- MAPA -->
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- BOTÓN LOGOUT -->
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Salir"
-        android:layout_gravity="top|end"
-        android:layout_margin="16dp"
-        android:background="@drawable/button_style"
-        android:textColor="@android:color/white"/>
-
-    <!-- BOTÓN FAVORITOS -->
-    <Button
-        android:id="@+id/btnFavorites"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="❤️"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:background="@drawable/button_style"
-        android:textColor="@android:color/white"/>
-
-    <!-- BOTÓN RESERVAS -->
-    <Button
-        android:id="@+id/btnReservations"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="📦"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="80dp"
+        android:layout_gravity="top"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/button_style"
-        android:textColor="@android:color/white"/>
+        android:background="@drawable/map_hint_background"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="14dp">
 
+        <ImageView
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/logo_huerto_cero" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="HuertoCero"
+                android:textColor="@color/ink"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvMapHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mueve el mapa y publica donde vendas. Tambien puedes tocar un punto."
+                android:textColor="@color/muted_ink"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="88dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button_secondary"
+            android:text="Salir"
+            android:textAllCaps="false"
+            android:textColor="@color/brand_olive"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp"
+        android:background="@drawable/map_panel_background"
+        android:elevation="14dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnAddProduct"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:background="@drawable/button_accent"
+            android:text="Publicar producto aqui"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:columnCount="2"
+            android:rowCount="2">
+
+            <Button
+                android:id="@+id/btnMyProducts"
+                android:layout_width="0dp"
+                android:layout_height="54dp"
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/button_primary"
+                android:text="Mis productos"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnMessages"
+                android:layout_width="0dp"
+                android:layout_height="54dp"
+                android:layout_columnWeight="1"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/button_primary"
+                android:text="Mensajes"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnReservations"
+                android:layout_width="0dp"
+                android:layout_height="54dp"
+                android:layout_columnWeight="1"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/button_secondary"
+                android:text="Reservas"
+                android:textAllCaps="false"
+                android:textColor="@color/brand_olive"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnFavorites"
+                android:layout_width="0dp"
+                android:layout_height="54dp"
+                android:layout_columnWeight="1"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_secondary"
+                android:text="Favoritos"
+                android:textAllCaps="false"
+                android:textColor="@color/brand_olive"
+                android:textStyle="bold" />
+        </GridLayout>
+
+        <Button
+            android:id="@+id/btnPrivacy"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/transparent"
+            android:text="Privacidad, normas y soporte"
+            android:textAllCaps="false"
+            android:textColor="@color/muted_ink"
+            android:textStyle="bold" />
+    </LinearLayout>
 </FrameLayout>

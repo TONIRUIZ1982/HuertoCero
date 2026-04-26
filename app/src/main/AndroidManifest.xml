@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.huertocero.huertocero">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/ic_launcher_huertocero"
         android:label="HuertoCero"
+        android:roundIcon="@drawable/ic_launcher_huertocero"
+        android:supportsRtl="true"
         android:theme="@style/Theme.HuertoCero">
 
         <!-- LOGIN (ARRANQUE) -->
@@ -25,6 +29,10 @@
         <activity android:name=".MapActivity"/>
         <activity android:name=".FavoritesActivity"/>
         <activity android:name=".ReservationsActivity"/>
+        <activity android:name=".ChatsActivity"/>
+        <activity android:name=".ChatActivity"/>
+        <activity android:name=".PrivacyActivity"/>
+        <activity android:name=".MyProductsActivity"/>
 
         <!-- GOOGLE MAPS -->
         <meta-data
