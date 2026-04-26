@@ -1,7 +1,3 @@
 <resources>
-    <string name="btn_favorite">Favorito</string>
-    <string name="btn_reserve">Reservar</string>
-    <string name="btn_navigate">Navegar</string>
-    <string name="desc_prev">Anterior</string>
-    <string name="desc_next">Siguiente</string>
+    <string name="app_name">HuertoCero</string>
 </resources>

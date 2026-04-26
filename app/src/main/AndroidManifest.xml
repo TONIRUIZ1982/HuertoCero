@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.huertocero.huertocero">
 
@@ -8,7 +9,7 @@
         android:label="HuertoCero"
         android:theme="@style/Theme.HuertoCero">
 
-        <!-- LOGIN -->
+        <!-- LOGIN (ARRANQUE) -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -17,15 +18,13 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
         </activity>
 
-        <!-- MAPA (CORRECTO) -->
-        <activity android:name=".ui.map.MapActivity"/>
-
         <!-- RESTO -->
+        <activity android:name=".MapActivity"/>
         <activity android:name=".FavoritesActivity"/>
         <activity android:name=".ReservationsActivity"/>
-        <activity android:name=".MainActivity"/>
 
         <!-- GOOGLE MAPS -->
         <meta-data
