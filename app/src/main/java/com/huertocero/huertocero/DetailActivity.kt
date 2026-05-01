@@ -3,13 +3,17 @@ package com.huertocero.huertocero
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : HuertoActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,12 +33,11 @@ class DetailActivity : AppCompatActivity() {
             .document(id)
             .get()
             .addOnSuccessListener {
-
                 val product = it.toObject(Product::class.java) ?: return@addOnSuccessListener
 
                 tvName.text = product.name
                 tvDesc.text = product.description
-                tvPrice.text = product.getPriceAsDouble().toString() + " €"
+                tvPrice.text = "${product.getPriceAsDouble()} EUR"
 
                 Glide.with(this)
                     .load(product.imageUrl.ifEmpty { "https://via.placeholder.com/300" })
@@ -54,40 +57,42 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun showReserveDialog(product: Product) {
+        val layout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+        }
 
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(product.name)
+        val info = TextView(this).apply {
+            text = getString(
+                R.string.description_price,
+                product.description,
+                product.getPriceAsDouble().toString()
+            )
+        }
 
-        val layout = LinearLayout(this)
-        layout.orientation = LinearLayout.VERTICAL
-
-        val info = TextView(this)
-        info.text = "Descripción: ${product.description}\nPrecio: ${product.getPriceAsDouble()} €"
-
-        val input = EditText(this)
-        input.hint = "Cantidad"
+        val input = EditText(this).apply {
+            hint = getString(R.string.quantity)
+        }
 
         layout.addView(info)
         layout.addView(input)
 
-        builder.setView(layout)
+        AlertDialog.Builder(this)
+            .setTitle(product.name)
+            .setView(layout)
+            .setPositiveButton(getString(R.string.reserve)) { _, _ ->
+                val data = hashMapOf(
+                    "productId" to product.id,
+                    "nombre" to product.name,
+                    "precio" to product.getPriceAsDouble()
+                )
 
-        builder.setPositiveButton("Reservar") { _, _ ->
+                FirebaseFirestore.getInstance()
+                    .collection("reservas")
+                    .add(data)
 
-            val data = hashMapOf(
-                "productId" to product.id,
-                "nombre" to product.name,
-                "precio" to product.getPriceAsDouble()
-            )
-
-            FirebaseFirestore.getInstance()
-                .collection("reservas")
-                .add(data)
-
-            Toast.makeText(this, "Reservado", Toast.LENGTH_SHORT).show()
-        }
-
-        builder.setNegativeButton("Cancelar", null)
-        builder.show()
+                Toast.makeText(this, getString(R.string.product_reserved), Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
     }
 }

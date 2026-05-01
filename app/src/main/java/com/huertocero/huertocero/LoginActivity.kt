@@ -10,10 +10,9 @@ import android.view.animation.OvershootInterpolator
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : HuertoActivity() {
 
     private lateinit var auth: FirebaseAuth
 
@@ -38,6 +37,7 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val btnRegister = findViewById<Button>(R.id.btnRegister)
         val btnPrivacy = findViewById<Button>(R.id.btnPrivacy)
+        val btnLanguage = findViewById<Button>(R.id.btnLanguage)
         val logoMark = findViewById<View>(R.id.logoMark)
         val heroIllustration = findViewById<View>(R.id.heroIllustration)
         val authCard = findViewById<View>(R.id.authCard)
@@ -48,12 +48,16 @@ class LoginActivity : AppCompatActivity() {
             startActivity(Intent(this, PrivacyActivity::class.java))
         }
 
+        btnLanguage.setOnClickListener {
+            LanguageDialog.show(this)
+        }
+
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -65,7 +69,11 @@ class LoginActivity : AppCompatActivity() {
                         startActivity(Intent(this, MapActivity::class.java))
                         finish()
                     } else {
-                        Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            getString(R.string.auth_error, task.exception?.message.orEmpty()),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
         }
@@ -75,12 +83,12 @@ class LoginActivity : AppCompatActivity() {
             val password = etPassword.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             if (password.length < 6) {
-                Toast.makeText(this, "Minimo 6 caracteres", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.password_min), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -89,11 +97,15 @@ class LoginActivity : AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     setButtonsLoading(btnLogin, btnRegister, false)
                     if (task.isSuccessful) {
-                        Toast.makeText(this, "Cuenta creada correctamente", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.account_created), Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this, MapActivity::class.java))
                         finish()
                     } else {
-                        Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            getString(R.string.auth_error, task.exception?.message.orEmpty()),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
         }
@@ -130,7 +142,7 @@ class LoginActivity : AppCompatActivity() {
     private fun setButtonsLoading(loginButton: Button, registerButton: Button, isLoading: Boolean) {
         loginButton.isEnabled = !isLoading
         registerButton.isEnabled = !isLoading
-        loginButton.text = if (isLoading) "Conectando..." else "Iniciar sesion"
-        registerButton.text = if (isLoading) "Espera un momento" else "Crear cuenta"
+        loginButton.text = if (isLoading) getString(R.string.connecting) else getString(R.string.login_button)
+        registerButton.text = if (isLoading) getString(R.string.please_wait) else getString(R.string.create_account)
     }
 }

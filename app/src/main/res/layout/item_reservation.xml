@@ -22,7 +22,7 @@
         android:layout_width="104dp"
         android:layout_height="52dp"
         android:background="@drawable/button_danger"
-        android:text="Eliminar"
+        android:text="@string/delete"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textStyle="bold" />

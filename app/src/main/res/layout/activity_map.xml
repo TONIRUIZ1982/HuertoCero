@@ -47,7 +47,7 @@
                 android:id="@+id/tvMapHint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Mueve el mapa y publica donde vendas. Tambien puedes tocar un punto."
+                android:text="@string/map_hint_default"
                 android:textColor="@color/muted_ink"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -57,9 +57,10 @@
             android:layout_width="88dp"
             android:layout_height="50dp"
             android:background="@drawable/button_secondary"
-            android:text="Salir"
+            android:text="@string/logout"
             android:textAllCaps="false"
             android:textColor="@color/brand_olive"
+            android:textSize="15sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -75,81 +76,119 @@
         <Button
             android:id="@+id/btnAddProduct"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
+            android:layout_height="62dp"
             android:background="@drawable/button_accent"
-            android:text="Publicar producto aqui"
+            android:text="@string/publish_here"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <GridLayout
+        <Button
+            android:id="@+id/btnFilter"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_secondary"
+            android:text="@string/filter_all"
+            android:textAllCaps="false"
+            android:textColor="@color/brand_olive"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:columnCount="2"
-            android:rowCount="2">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnMyProducts"
                 android:layout_width="0dp"
-                android:layout_height="54dp"
-                android:layout_columnWeight="1"
+                android:layout_height="72dp"
                 android:layout_marginEnd="6dp"
+                android:layout_weight="1"
                 android:background="@drawable/button_primary"
-                android:text="Mis productos"
+                android:maxLines="2"
+                android:text="@string/my_products"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnMessages"
                 android:layout_width="0dp"
-                android:layout_height="54dp"
-                android:layout_columnWeight="1"
+                android:layout_height="72dp"
                 android:layout_marginStart="6dp"
+                android:layout_weight="1"
                 android:background="@drawable/button_primary"
-                android:text="Mensajes"
+                android:maxLines="1"
+                android:text="@string/messages"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
+                android:textSize="14sp"
                 android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btnReservations"
                 android:layout_width="0dp"
-                android:layout_height="54dp"
-                android:layout_columnWeight="1"
-                android:layout_marginTop="10dp"
+                android:layout_height="66dp"
                 android:layout_marginEnd="6dp"
+                android:layout_weight="1"
                 android:background="@drawable/button_secondary"
-                android:text="Reservas"
+                android:maxLines="1"
+                android:text="@string/reservations"
                 android:textAllCaps="false"
                 android:textColor="@color/brand_olive"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnFavorites"
                 android:layout_width="0dp"
-                android:layout_height="54dp"
-                android:layout_columnWeight="1"
+                android:layout_height="66dp"
                 android:layout_marginStart="6dp"
-                android:layout_marginTop="10dp"
+                android:layout_weight="1"
                 android:background="@drawable/button_secondary"
-                android:text="Favoritos"
+                android:maxLines="1"
+                android:text="@string/favorites"
                 android:textAllCaps="false"
                 android:textColor="@color/brand_olive"
+                android:textSize="14sp"
                 android:textStyle="bold" />
-        </GridLayout>
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnPrivacy"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="52dp"
             android:layout_marginTop="10dp"
             android:background="@android:color/transparent"
-            android:text="Privacidad, normas y soporte"
+            android:maxLines="1"
+            android:text="@string/privacy_support"
             android:textAllCaps="false"
             android:textColor="@color/muted_ink"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnLanguage"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:maxLines="1"
+            android:text="@string/language"
+            android:textAllCaps="false"
+            android:textColor="@color/muted_ink"
+            android:textSize="13sp"
             android:textStyle="bold" />
     </LinearLayout>
 </FrameLayout>

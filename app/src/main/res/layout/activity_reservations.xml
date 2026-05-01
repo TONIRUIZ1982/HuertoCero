@@ -11,7 +11,7 @@
         android:layout_width="120dp"
         android:layout_height="54dp"
         android:background="@drawable/button_secondary"
-        android:text="Volver"
+        android:text="@string/back"
         android:textAllCaps="false"
         android:textColor="@color/brand_olive"
         android:textStyle="bold" />
@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
-        android:text="Reservas"
+        android:text="@string/reservations"
         android:textColor="@color/ink"
         android:textSize="28sp"
         android:textStyle="bold" />
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:gravity="center"
-        android:text="No tienes reservas"
+        android:text="@string/reservations_empty"
         android:textColor="@color/muted_ink"
         android:textSize="16sp"
         android:visibility="gone" />

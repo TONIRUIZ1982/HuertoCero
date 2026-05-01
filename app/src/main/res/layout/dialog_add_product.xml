@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/surface"
     android:overScrollMode="never">
 
     <LinearLayout
@@ -16,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="190dp"
             android:background="@drawable/auth_input_background"
-            android:contentDescription="Imagen del producto"
+            android:contentDescription="@string/product_image"
             android:padding="12dp"
             android:scaleType="centerCrop"
             android:src="@drawable/auth_hero_market" />
@@ -26,13 +27,14 @@
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:layout_marginTop="12dp"
-            android:text="Agregar imagen"
+            android:text="@string/add_image"
             android:textAllCaps="false"
-            android:textColor="@color/brand_olive"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/green_primary"
             app:cornerRadius="16dp"
             app:icon="@android:drawable/ic_menu_camera"
             app:iconGravity="textStart"
-            app:iconTint="@color/brand_olive"
+            app:iconTint="@android:color/white"
             app:strokeColor="#C9DFC2"
             app:strokeWidth="1dp" />
 
@@ -42,10 +44,13 @@
             android:layout_height="56dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/auth_input_background"
-            android:hint="Nombre"
+            android:hint="@string/name_hint"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textColor="@color/ink"
+            android:textColorHint="@color/muted_ink"
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/etDescription"
@@ -54,8 +59,11 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/auth_input_background"
             android:gravity="top"
-            android:hint="Descripcion"
-            android:padding="16dp" />
+            android:hint="@string/description_hint"
+            android:padding="16dp"
+            android:textColor="@color/ink"
+            android:textColorHint="@color/muted_ink"
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/etPrice"
@@ -63,10 +71,32 @@
             android:layout_height="56dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/auth_input_background"
-            android:hint="Precio"
+            android:hint="@string/price_hint"
             android:inputType="numberDecimal"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textColor="@color/ink"
+            android:textColorHint="@color/muted_ink"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/category"
+            android:textColor="@color/ink"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinnerCategory"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/auth_input_background"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:popupBackground="@color/surface" />
     </LinearLayout>
 </ScrollView>

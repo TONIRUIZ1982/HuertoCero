@@ -2,13 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/ic_launcher_huertocero"
-        android:label="HuertoCero"
+        android:label="@string/app_name"
         android:roundIcon="@drawable/ic_launcher_huertocero"
         android:supportsRtl="true"
         android:theme="@style/Theme.HuertoCero">
@@ -33,6 +35,7 @@
         <activity android:name=".ChatActivity"/>
         <activity android:name=".PrivacyActivity"/>
         <activity android:name=".MyProductsActivity"/>
+        <activity android:name=".SellerProfileActivity"/>
 
         <!-- GOOGLE MAPS -->
         <meta-data

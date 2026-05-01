@@ -8,11 +8,10 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class ReservationsActivity : AppCompatActivity() {
+class ReservationsActivity : HuertoActivity() {
 
     private lateinit var listView: ListView
     private lateinit var tvEmpty: TextView
@@ -70,7 +69,11 @@ class ReservationsActivity : AppCompatActivity() {
                                 .document(doc.id)
                                 .delete()
 
-                            Toast.makeText(this@ReservationsActivity, "Reserva eliminada", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@ReservationsActivity,
+                                getString(R.string.reservation_deleted),
+                                Toast.LENGTH_SHORT
+                            ).show()
                             loadReservations()
                         }
 

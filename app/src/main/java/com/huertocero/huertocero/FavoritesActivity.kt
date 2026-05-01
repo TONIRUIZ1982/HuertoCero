@@ -8,11 +8,10 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FavoritesActivity : AppCompatActivity() {
+class FavoritesActivity : HuertoActivity() {
 
     private lateinit var listView: ListView
     private lateinit var tvEmpty: TextView
@@ -72,7 +71,7 @@ class FavoritesActivity : AppCompatActivity() {
                                 .document(doc.id)
                                 .delete()
 
-                            Toast.makeText(this@FavoritesActivity, "Eliminado", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@FavoritesActivity, getString(R.string.removed), Toast.LENGTH_SHORT).show()
                             loadFavorites()
                         }
 

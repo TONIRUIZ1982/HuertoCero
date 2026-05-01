@@ -35,13 +35,13 @@
 
         <Button
             android:id="@+id/btnNavigate"
-            android:text="Navegar"
+            android:text="@string/navigate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/btnReserve"
-            android:text="Reservar"
+            android:text="@string/reserve"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
