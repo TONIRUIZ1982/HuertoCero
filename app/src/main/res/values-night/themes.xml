@@ -1,7 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.HuertoCero" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Theme.HuertoCero" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/green_primary</item>
+        <item name="colorOnPrimary">#102016</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/surface_soft</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowAnimationStyle">@style/HuertoWindowAnimation</item>
+    </style>
+
+    <style name="HuertoWindowAnimation">
+        <item name="android:activityOpenEnterAnimation">@anim/huerto_activity_open_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/huerto_activity_open_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/huerto_activity_close_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/huerto_activity_close_exit</item>
     </style>
 </resources>

@@ -20,7 +20,7 @@
             android:contentDescription="@string/product_image"
             android:padding="12dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/auth_hero_market" />
+            android:src="@drawable/hero_market_global" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnImage"
@@ -79,6 +79,50 @@
             android:textColor="@color/ink"
             android:textColorHint="@color/muted_ink"
             android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etStockTotal"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/auth_input_background"
+            android:hint="@string/stock_total_hint"
+            android:inputType="numberDecimal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:singleLine="true"
+            android:textColor="@color/ink"
+            android:textColorHint="@color/muted_ink"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/spinnerUnit"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/auth_input_background"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:popupBackground="@color/surface" />
+
+            <Spinner
+                android:id="@+id/spinnerCurrency"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/auth_input_background"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:popupBackground="@color/surface" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"

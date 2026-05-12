@@ -61,8 +61,11 @@ class FavoritesActivity : HuertoActivity() {
 
                         val productName = doc.getString("name") ?: ""
                         val price = doc.getDouble("price") ?: 0.0
+                        val currency = doc.getString("currency") ?: "EUR"
 
-                        name.text = "$productName - $price EUR"
+                        name.text = "$productName - ${
+                            MarketFormat.formatMoney(this@FavoritesActivity, price, currency)
+                        }"
 
                         btnDelete.setOnClickListener {
                             db.collection("users")

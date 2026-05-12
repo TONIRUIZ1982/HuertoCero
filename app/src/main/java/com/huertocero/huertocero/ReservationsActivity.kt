@@ -61,20 +61,26 @@ class ReservationsActivity : HuertoActivity() {
                         val doc = list[position]
                         val name = doc.getString("nombre") ?: ""
                         val price = doc.getDouble("precio") ?: 0.0
+                        val currency = doc.getString("currency") ?: "EUR"
+                        val quantity = doc.getDouble("quantity") ?: 1.0
+                        val unit = doc.getString("unit") ?: "kg"
 
-                        tv.text = "$name - $price EUR"
+                        tv.text = "$name - ${
+                            MarketFormat.formatMoney(this@ReservationsActivity, price, currency)
+                        } - ${
+                            MarketFormat.formatQuantity(this@ReservationsActivity, quantity, unit)
+                        }"
 
                         btnDelete.setOnClickListener {
-                            db.collection("reservas")
-                                .document(doc.id)
-                                .delete()
-
-                            Toast.makeText(
-                                this@ReservationsActivity,
-                                getString(R.string.reservation_deleted),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            loadReservations()
+                            ReservationService.releaseReservation(db, doc.id)
+                                .addOnSuccessListener {
+                                    Toast.makeText(
+                                        this@ReservationsActivity,
+                                        getString(R.string.reservation_deleted),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    loadReservations()
+                                }
                         }
 
                         return view

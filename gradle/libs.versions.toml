@@ -10,8 +10,10 @@ material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.2.0"
 googleServices = "4.4.2"
+crashlyticsPlugin = "3.0.6"
 firebaseBom = "33.7.0"
 playServicesMaps = "19.0.0"
+playServicesLocation = "21.3.0"
 glide = "4.16.0"
 firebaseStorage = "21.0.1"
 
@@ -27,11 +29,15 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsPlugin" }

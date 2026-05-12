@@ -4,11 +4,13 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 
@@ -18,6 +20,12 @@ class LoginActivity : HuertoActivity() {
 
     override fun onStart() {
         super.onStart()
+
+        if (!OnboardingActivity.hasSeen(this)) {
+            startActivity(Intent(this, OnboardingActivity::class.java))
+            finish()
+            return
+        }
 
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
@@ -34,22 +42,36 @@ class LoginActivity : HuertoActivity() {
 
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
+        val btnTogglePassword = findViewById<ImageButton>(R.id.btnTogglePassword)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val btnRegister = findViewById<Button>(R.id.btnRegister)
         val btnPrivacy = findViewById<Button>(R.id.btnPrivacy)
         val btnLanguage = findViewById<Button>(R.id.btnLanguage)
-        val logoMark = findViewById<View>(R.id.logoMark)
         val heroIllustration = findViewById<View>(R.id.heroIllustration)
         val authCard = findViewById<View>(R.id.authCard)
 
-        playIntroAnimation(logoMark, heroIllustration, authCard)
+        playIntroAnimation(heroIllustration, authCard)
+        btnLanguage.visibility = View.GONE
+        UiMotion.makePressable(btnLogin, btnRegister, btnPrivacy, btnTogglePassword)
+
+        var isPasswordVisible = false
+        btnTogglePassword.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            val cursorPosition = etPassword.selectionStart.coerceAtLeast(0)
+            etPassword.inputType = if (isPasswordVisible) {
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            } else {
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            }
+            btnTogglePassword.setImageResource(if (isPasswordVisible) R.drawable.ic_eye_off else R.drawable.ic_eye)
+            btnTogglePassword.contentDescription = getString(
+                if (isPasswordVisible) R.string.hide_password else R.string.show_password
+            )
+            etPassword.setSelection(cursorPosition.coerceAtMost(etPassword.text?.length ?: 0))
+        }
 
         btnPrivacy.setOnClickListener {
             startActivity(Intent(this, PrivacyActivity::class.java))
-        }
-
-        btnLanguage.setOnClickListener {
-            LanguageDialog.show(this)
         }
 
         btnLogin.setOnClickListener {

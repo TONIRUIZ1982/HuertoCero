@@ -1,194 +1,509 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/homeRoot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/home_dark_market_background"
+    android:fitsSystemWindows="true">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:alpha="0" />
+
+    <ImageView
+        android:id="@+id/brandWatermark"
+        android:layout_width="360dp"
+        android:layout_height="360dp"
+        android:layout_gravity="center"
+        android:alpha="0.075"
+        android:contentDescription="@string/app_name"
+        android:rotation="-12"
+        android:scaleType="fitCenter"
+        android:src="@drawable/logo_huerto_cero_mark" />
 
     <LinearLayout
+        android:id="@+id/homeTopBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/map_hint_background"
-        android:elevation="8dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="14dp">
-
-        <ImageView
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/logo_huerto_cero" />
+        android:orientation="vertical"
+        android:paddingStart="18dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="18dp">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/logo_huerto_cero_mark" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/near_you"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="70dp"
+                android:layout_height="42dp"
+                android:background="@drawable/button_secondary"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:text="@string/logout"
+                android:textAllCaps="false"
+                android:textColor="@color/brand_olive"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/searchBar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/home_search_background"
+            android:clickable="true"
+            android:elevation="6dp"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="42dp"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/search_products_title"
+                android:gravity="center"
+                android:padding="11dp"
+                android:src="@drawable/ic_search_professional"
+                android:tint="@color/brand_olive" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:id="@+id/tvSearchText"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="HuertoCero"
-                android:textColor="@color/ink"
+                android:layout_weight="1"
+                android:text="@string/search_placeholder"
+                android:textColor="@color/muted_ink"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/btnFilter"
+                android:layout_width="96dp"
+                android:layout_height="40dp"
+                android:background="@drawable/button_secondary"
+                android:drawableStart="@drawable/ic_filter_sliders"
+                android:drawablePadding="5dp"
+                android:drawableTint="@color/brand_olive"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/filter_short"
+                android:textAllCaps="false"
+                android:textColor="@color/brand_olive"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvImpact"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/category_chip_background"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:text="@string/impact_empty"
+            android:textColor="@color/brand_olive"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/quickActionsGrid"
+        android:layout_width="match_parent"
+        android:layout_height="184dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="176dp"
+        android:orientation="vertical"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btnQuickSell"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/action_tile_background"
+                android:clickable="true"
+                android:elevation="12dp"
+                android:focusable="true"
+                android:drawableTop="@drawable/ic_quick_sell"
+                android:drawablePadding="6dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/quick_sell"
+                android:textColor="@color/brand_olive"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnQuickMap"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/action_tile_background"
+                android:clickable="true"
+                android:elevation="12dp"
+                android:focusable="true"
+                android:drawableTop="@drawable/ic_quick_map"
+                android:drawablePadding="6dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/quick_map"
+                android:textColor="@color/brand_olive"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnQuickReservations"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/action_tile_background"
+                android:clickable="true"
+                android:elevation="12dp"
+                android:focusable="true"
+                android:drawableTop="@drawable/ic_quick_bookings"
+                android:drawablePadding="6dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/quick_reservations"
+                android:textColor="@color/brand_olive"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btnQuickFavorites"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/action_tile_background"
+                android:clickable="true"
+                android:elevation="12dp"
+                android:focusable="true"
+                android:drawableTop="@drawable/ic_quick_favorites"
+                android:drawablePadding="6dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/quick_favorites"
+                android:textColor="@color/brand_olive"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnQuickInvite"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/action_tile_accent_background"
+                android:clickable="true"
+                android:elevation="14dp"
+                android:focusable="true"
+                android:drawableTop="@drawable/ic_quick_invite"
+                android:drawablePadding="6dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/quick_invite"
+                android:textColor="@color/brand_olive"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnQuickImpact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/action_tile_background"
+                android:clickable="true"
+                android:elevation="12dp"
+                android:focusable="true"
+                android:drawableTop="@drawable/ic_quick_impact"
+                android:drawablePadding="6dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/quick_impact"
+                android:textColor="@color/brand_olive"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/mapCreateHint"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/category_chip_background"
+        android:elevation="12dp"
+        android:gravity="center"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="@string/tap_map_create_product"
+        android:textColor="@color/brand_olive"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/productFeedPanel"
+        android:layout_width="match_parent"
+        android:layout_height="204dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="386dp"
+        android:orientation="vertical"
+        android:paddingStart="18dp"
+        android:paddingEnd="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingEnd="18dp">
+
+            <TextView
+                android:id="@+id/tvFeedTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/fresh_nearby"
+                android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvMapHint"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/map_hint_default"
-                android:textColor="@color/muted_ink"
-                android:textSize="12sp" />
+                android:id="@+id/tvFeedBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:background="@drawable/category_chip_background"
+                android:gravity="center"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/badge_km0"
+                android:textColor="@color/brand_olive"
+                android:textSize="12sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="88dp"
-            android:layout_height="50dp"
-            android:background="@drawable/button_secondary"
-            android:text="@string/logout"
-            android:textAllCaps="false"
-            android:textColor="@color/brand_olive"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+        <HorizontalScrollView
+            android:id="@+id/productRailScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/productRail"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="84dp"
         android:layout_gravity="bottom"
-        android:layout_margin="16dp"
-        android:background="@drawable/map_panel_background"
-        android:elevation="14dp"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/btnAddProduct"
-            android:layout_width="match_parent"
-            android:layout_height="62dp"
-            android:background="@drawable/button_accent"
-            android:text="@string/publish_here"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnFilter"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/button_secondary"
-            android:text="@string/filter_all"
-            android:textAllCaps="false"
-            android:textColor="@color/brand_olive"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="44dp"
+        android:background="@drawable/nav_bar_background"
+        android:backgroundTint="@null"
+        android:elevation="26dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
+            android:id="@+id/btnFavorites"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginEnd="7dp"
+            android:layout_weight="1"
+            android:background="@drawable/nav_item_active_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="7dp">
 
-            <Button
-                android:id="@+id/btnMyProducts"
-                android:layout_width="0dp"
-                android:layout_height="72dp"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_primary"
-                android:maxLines="2"
-                android:text="@string/my_products"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/iconNavHome"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/nav_home"
+                android:src="@drawable/ic_nav_home"
+                android:tint="@android:color/white" />
 
-            <Button
-                android:id="@+id/btnMessages"
-                android:layout_width="0dp"
-                android:layout_height="72dp"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_primary"
-                android:maxLines="1"
-                android:text="@string/messages"
-                android:textAllCaps="false"
+            <TextView
+                android:id="@+id/textNavHome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/nav_home"
                 android:textColor="@android:color/white"
-                android:textSize="14sp"
+                android:textSize="10sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+            android:id="@+id/btnMessages"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginHorizontal="7dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="7dp">
 
-            <Button
-                android:id="@+id/btnReservations"
-                android:layout_width="0dp"
-                android:layout_height="66dp"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_secondary"
-                android:maxLines="1"
-                android:text="@string/reservations"
-                android:textAllCaps="false"
-                android:textColor="@color/brand_olive"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/iconNavChat"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/nav_messages"
+                android:src="@drawable/ic_nav_chat"
+                android:tint="@color/muted_ink" />
 
-            <Button
-                android:id="@+id/btnFavorites"
-                android:layout_width="0dp"
-                android:layout_height="66dp"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_secondary"
-                android:maxLines="1"
-                android:text="@string/favorites"
-                android:textAllCaps="false"
-                android:textColor="@color/brand_olive"
-                android:textSize="14sp"
+            <TextView
+                android:id="@+id/textNavChat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/nav_messages"
+                android:textColor="@color/muted_ink"
+                android:textSize="10sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <Button
+        <LinearLayout
             android:id="@+id/btnPrivacy"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="10dp"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="7dp"
+            android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:maxLines="1"
-            android:text="@string/privacy_support"
-            android:textAllCaps="false"
-            android:textColor="@color/muted_ink"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="7dp">
 
-        <Button
-            android:id="@+id/btnLanguage"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
-            android:maxLines="1"
-            android:text="@string/language"
-            android:textAllCaps="false"
-            android:textColor="@color/muted_ink"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/iconNavProfile"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/nav_profile"
+                android:src="@drawable/ic_nav_profile"
+                android:tint="@color/muted_ink" />
+
+            <TextView
+                android:id="@+id/textNavProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/nav_profile"
+                android:textColor="@color/muted_ink"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/transitionOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@drawable/home_dark_market_background"
+        android:clickable="false"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/transitionLogo"
+            android:layout_width="92dp"
+            android:layout_height="92dp"
+            android:layout_gravity="center"
+            android:src="@drawable/logo_huerto_cero_mark" />
+    </FrameLayout>
 </FrameLayout>

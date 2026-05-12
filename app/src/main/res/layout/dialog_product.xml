@@ -21,15 +21,21 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="240dp">
+            android:layout_height="292dp">
 
             <ImageView
                 android:id="@+id/imgProduct"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/auth_input_background"
+                android:background="@drawable/product_image_round"
                 android:contentDescription="@string/product_image"
                 android:scaleType="centerCrop" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/product_detail_gradient" />
 
             <TextView
                 android:id="@+id/tvCategory"
@@ -106,6 +112,64 @@
             android:textSize="21sp"
             android:textStyle="bold" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/category_chip_background"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp"
+                android:text="@string/badge_eco"
+                android:textColor="@color/brand_olive"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/category_chip_background"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp"
+                android:text="@string/badge_km0"
+                android:textColor="@color/brand_olive"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/category_chip_background"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp"
+                android:text="@string/badge_local"
+                android:textColor="@color/brand_olive"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvStock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/scarcity_chip_background"
+            android:textColor="@color/scarcity"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
@@ -121,6 +185,10 @@
             android:layout_height="54dp"
             android:layout_marginTop="12dp"
             android:background="@drawable/button_secondary"
+            android:drawableStart="@drawable/ic_action_seller"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/brand_olive"
+            android:gravity="center"
             android:text="@string/seller_profile"
             android:textAllCaps="false"
             android:textColor="@color/brand_olive"
@@ -135,6 +203,30 @@
             android:textColor="@color/muted_ink"
             android:textSize="13sp" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="@string/seller_trust"
+            android:textColor="@color/muted_ink"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btnFollow"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_secondary"
+            android:drawableStart="@drawable/ic_action_user_add"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/brand_olive"
+            android:gravity="center"
+            android:text="@string/follow_seller_category"
+            android:textAllCaps="false"
+            android:textColor="@color/brand_olive"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -148,6 +240,10 @@
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_accent"
+                android:drawableStart="@drawable/ic_action_chat"
+                android:drawablePadding="8dp"
+                android:drawableTint="@android:color/white"
+                android:gravity="center"
                 android:text="@string/chat"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
@@ -159,7 +255,11 @@
                 android:layout_height="56dp"
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/button_danger"
+                android:background="@drawable/button_accent"
+                android:drawableStart="@drawable/ic_reserve"
+                android:drawablePadding="8dp"
+                android:drawableTint="@android:color/white"
+                android:gravity="center"
                 android:text="@string/reserve"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
@@ -179,6 +279,10 @@
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_secondary"
+                android:drawableStart="@drawable/ic_action_heart"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/brand_olive"
+                android:gravity="center"
                 android:text="@string/favorite"
                 android:textAllCaps="false"
                 android:textColor="@color/brand_olive"
@@ -191,9 +295,15 @@
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_primary"
-                android:text="@string/navigate"
+                android:drawableStart="@drawable/ic_action_route"
+                android:drawablePadding="7dp"
+                android:drawableTint="@android:color/white"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="@string/take_me_to_product"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -210,6 +320,10 @@
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_secondary"
+                android:drawableStart="@drawable/ic_action_star"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/brand_olive"
+                android:gravity="center"
                 android:text="@string/review"
                 android:textAllCaps="false"
                 android:textColor="@color/brand_olive"
@@ -222,10 +336,29 @@
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_secondary"
+                android:drawableStart="@drawable/ic_action_flag"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/brand_olive"
+                android:gravity="center"
                 android:text="@string/report"
                 android:textAllCaps="false"
                 android:textColor="@color/brand_olive"
                 android:textStyle="bold" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btnShare"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_secondary"
+            android:drawableStart="@drawable/ic_action_share"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/brand_olive"
+            android:gravity="center"
+            android:text="@string/share_product"
+            android:textAllCaps="false"
+            android:textColor="@color/brand_olive"
+            android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

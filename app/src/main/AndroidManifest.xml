@@ -4,14 +4,15 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/ic_launcher_huertocero"
+        android:icon="@drawable/logo_huerto_cero_mark"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_launcher_huertocero"
+        android:roundIcon="@drawable/logo_huerto_cero_mark"
         android:supportsRtl="true"
         android:theme="@style/Theme.HuertoCero">
 
@@ -28,6 +29,7 @@
         </activity>
 
         <!-- RESTO -->
+        <activity android:name=".OnboardingActivity"/>
         <activity android:name=".MapActivity"/>
         <activity android:name=".FavoritesActivity"/>
         <activity android:name=".ReservationsActivity"/>
@@ -36,6 +38,14 @@
         <activity android:name=".PrivacyActivity"/>
         <activity android:name=".MyProductsActivity"/>
         <activity android:name=".SellerProfileActivity"/>
+
+        <service
+            android:name=".HuertoMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
 
         <!-- GOOGLE MAPS -->
         <meta-data
