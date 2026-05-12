@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <rect width="1024" height="500" fill="#274C2E"/>
+  <path d="M0 365C170 260 290 285 430 345C590 413 740 345 1024 230V500H0Z" fill="#315B38"/>
+  <path d="M0 420C190 330 340 355 510 420C665 480 800 440 1024 350V500H0Z" fill="#89C64A"/>
+  <circle cx="800" cy="112" r="52" fill="#F6C65B"/>
+  <rect x="110" y="170" width="240" height="190" rx="32" fill="#FFFFFF"/>
+  <path d="M180 150C145 95 160 45 215 18C260 60 270 110 235 158C290 90 370 65 455 105C432 198 355 245 250 220C225 260 210 305 205 360H160C166 270 195 205 240 152C215 165 194 165 180 150Z" fill="#DFF5DC"/>
+  <path d="M205 44C235 78 238 115 214 150C170 120 168 78 205 44Z" fill="#89C64A"/>
+  <path d="M420 120C385 165 335 192 268 200C290 135 340 105 420 120Z" fill="#89C64A"/>
+  <text x="420" y="222" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700" fill="#FFFFFF">HuertoCero</text>
+  <text x="424" y="288" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#DFF5DC">Productos locales, reservas y chat directo</text>
+  <text x="424" y="340" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#FFFFFF">Compra y vende desde el huerto</text>
+</svg>

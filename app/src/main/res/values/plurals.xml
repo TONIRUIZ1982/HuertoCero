@@ -1,0 +1,6 @@
+<resources>
+    <plurals name="search_results_count">
+        <item quantity="one">%1$d producto encontrado</item>
+        <item quantity="other">%1$d productos encontrados</item>
+    </plurals>
+</resources>

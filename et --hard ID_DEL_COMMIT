@@ -1,0 +1,31 @@
+[33macc8485[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m HEAD@{0}: commit (amend): Fix after GitHub sync
+[33mf49e3cf[m HEAD@{1}: commit (amend): Fix after GitHub sync
+[33mfcaa017[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{2}: commit: Fix after GitHub sync
+[33m1dea01a[m HEAD@{3}: commit (merge): Merge remote-tracking branch 'origin/master'
+[33m95d9ddf[m HEAD@{4}: commit: Merge remote-tracking branch 'origin/huertocero' into huertocero
+[33m2c70812[m HEAD@{5}: commit: limpieza
+[33ma00468c[m HEAD@{6}: checkout: moving from huertocero to master
+[33mcbef22b[m HEAD@{7}: commit (amend): Merge remote-tracking branch 'origin/huertocero' into huertocero
+[33mae415fa[m HEAD@{8}: merge origin/huertocero: Merge made by the 'ort' strategy.
+[33m137653b[m HEAD@{9}: commit (amend): update: mejoras en login y UI
+[33m8be0115[m HEAD@{10}: commit (amend): huertocero
+[33me0bcf93[m HEAD@{11}: commit (amend): huertocero
+[33mbff06c7[m HEAD@{12}: commit (amend): huertocero
+[33m185941b[m HEAD@{13}: commit (amend): huertocero
+[33ma00468c[m HEAD@{14}: checkout: moving from master to huertocero
+[33ma00468c[m HEAD@{15}: commit (amend): huertocero
+[33m664c20b[m HEAD@{16}: commit (amend): huertocero
+[33m0f7f658[m HEAD@{17}: commit (amend): Merge remote-tracking branch 'origin/master'
+[33me9425c6[m HEAD@{18}: merge origin/master: Merge made by the 'ort' strategy.
+[33mb673da3[m HEAD@{19}: commit (amend): Merge remote-tracking branch 'origin/master'
+[33ma3bcb31[m HEAD@{20}: commit (amend): Merge remote-tracking branch 'origin/master'
+[33m5cfa382[m HEAD@{21}: commit: Merge remote-tracking branch 'origin/master'
+[33m83d1ce6[m HEAD@{22}: commit: Merge remote-tracking branch 'origin/master'
+[33mdf40479[m HEAD@{23}: merge origin/master: Merge made by the 'ort' strategy.
+[33md78f6f6[m HEAD@{24}: commit (amend): Merge remote-tracking branch 'origin/master'
+[33m1e45d4d[m HEAD@{25}: merge origin/master: Merge made by the 'ort' strategy.
+[33mc6e103c[m HEAD@{26}: commit (amend): huertocero
+[33mb069185[m HEAD@{27}: commit (amend): huertocero
+[33m63e51aa[m HEAD@{28}: commit (merge): Merge remote-tracking branch 'origin/master'
+[33m366540a[m HEAD@{29}: commit (amend): huertocero
+[33m9ca8f75[m HEAD@{30}: clone: from https://github.com/TONIRUIZ1982/HuertoCero.git

@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">HuertoCero</string>
+    <string name="language">Sprache</string>
+    <string name="language_title">Sprache ändern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="save">Speichern</string>
+    <string name="reserve">Reservieren</string>
+    <string name="chat">Chat</string>
+    <string name="favorite">Favorit</string>
+    <string name="navigate">Route</string>
+    <string name="price_hint">Preis</string>
+    <string name="stock_total_hint">Gesamtbestand verfügbar</string>
+    <string name="available_stock">Verfügbar: %1$s</string>
+    <string name="only_left">Nur noch %1$s verfügbar</string>
+    <string name="quantity_hint">Menge reservieren</string>
+    <string name="reservation_error_stock">Nicht genug Bestand für diese Reservierung</string>
+    <string name="reservation_error_quantity">Gib eine gültige Menge ein</string>
+    <string name="reservation_error_generic">Reservierung konnte nicht abgeschlossen werden</string>
+    <string name="reservation_hold_notice">30 Min. reserviert. Bitte vor Ablauf mit dem Verkäufer bestätigen.</string>
+    <string name="product_reserved">Produkt reserviert</string>
+    <string name="unit_piece">Stück</string>
+    <string name="unit_box">Kiste</string>
+    <string name="unit_bunch">Bund</string>
+</resources>

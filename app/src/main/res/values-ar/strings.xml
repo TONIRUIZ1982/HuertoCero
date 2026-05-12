@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">HuertoCero</string>
+    <string name="language">اللغة</string>
+    <string name="language_title">تغيير اللغة</string>
+    <string name="cancel">إلغاء</string>
+    <string name="save">حفظ</string>
+    <string name="reserve">احجز</string>
+    <string name="chat">دردشة</string>
+    <string name="favorite">مفضل</string>
+    <string name="navigate">الاتجاهات</string>
+    <string name="price_hint">السعر</string>
+    <string name="stock_total_hint">إجمالي المخزون المتاح</string>
+    <string name="available_stock">المتاح: %1$s</string>
+    <string name="only_left">بقي %1$s فقط</string>
+    <string name="quantity_hint">الكمية للحجز</string>
+    <string name="reservation_error_stock">لا يوجد مخزون كاف لهذا الحجز</string>
+    <string name="reservation_error_quantity">أدخل كمية صالحة</string>
+    <string name="reservation_error_generic">تعذر إكمال الحجز</string>
+    <string name="reservation_hold_notice">محجوز لمدة 30 دقيقة. أكد مع البائع قبل انتهاء المهلة.</string>
+    <string name="product_reserved">تم حجز المنتج</string>
+    <string name="unit_piece">وحدة</string>
+    <string name="unit_box">صندوق</string>
+    <string name="unit_bunch">حزمة</string>
+</resources>

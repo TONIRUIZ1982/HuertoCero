@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">HuertoCero</string>
+    <string name="language">Dil</string>
+    <string name="language_title">Dili değiştir</string>
+    <string name="cancel">İptal</string>
+    <string name="save">Kaydet</string>
+    <string name="reserve">Rezerve et</string>
+    <string name="chat">Sohbet</string>
+    <string name="favorite">Favori</string>
+    <string name="navigate">Yol tarifi</string>
+    <string name="price_hint">Fiyat</string>
+    <string name="stock_total_hint">Toplam mevcut stok</string>
+    <string name="available_stock">Mevcut: %1$s</string>
+    <string name="only_left">Sadece %1$s kaldı</string>
+    <string name="quantity_hint">Rezerve edilecek miktar</string>
+    <string name="reservation_error_stock">Bu rezervasyon için yeterli stok yok</string>
+    <string name="reservation_error_quantity">Geçerli bir miktar gir</string>
+    <string name="reservation_error_generic">Rezervasyon tamamlanamadı</string>
+    <string name="reservation_hold_notice">30 dakika tutuldu. Süresi dolmadan satıcıyla onayla.</string>
+    <string name="product_reserved">Ürün rezerve edildi</string>
+    <string name="unit_piece">adet</string>
+    <string name="unit_box">kutu</string>
+    <string name="unit_bunch">demet</string>
+</resources>

@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">HuertoCero</string>
+    <string name="language">언어</string>
+    <string name="language_title">언어 변경</string>
+    <string name="cancel">취소</string>
+    <string name="save">저장</string>
+    <string name="reserve">예약</string>
+    <string name="chat">채팅</string>
+    <string name="favorite">즐겨찾기</string>
+    <string name="navigate">길찾기</string>
+    <string name="price_hint">가격</string>
+    <string name="stock_total_hint">전체 재고</string>
+    <string name="available_stock">가능 수량: %1$s</string>
+    <string name="only_left">%1$s만 남음</string>
+    <string name="quantity_hint">예약 수량</string>
+    <string name="reservation_error_stock">이 예약에 필요한 재고가 부족합니다</string>
+    <string name="reservation_error_quantity">올바른 수량을 입력하세요</string>
+    <string name="reservation_error_generic">예약을 완료할 수 없습니다</string>
+    <string name="reservation_hold_notice">30분 동안 예약됩니다. 만료 전에 판매자와 확인하세요.</string>
+    <string name="product_reserved">상품이 예약되었습니다</string>
+    <string name="unit_piece">개</string>
+    <string name="unit_box">상자</string>
+    <string name="unit_bunch">묶음</string>
+</resources>

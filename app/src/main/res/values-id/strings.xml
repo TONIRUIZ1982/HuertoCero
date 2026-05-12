@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">HuertoCero</string>
+    <string name="language">Bahasa</string>
+    <string name="language_title">Ubah bahasa</string>
+    <string name="cancel">Batal</string>
+    <string name="save">Simpan</string>
+    <string name="reserve">Reservasi</string>
+    <string name="chat">Chat</string>
+    <string name="favorite">Favorit</string>
+    <string name="navigate">Arah</string>
+    <string name="price_hint">Harga</string>
+    <string name="stock_total_hint">Total stok tersedia</string>
+    <string name="available_stock">Tersedia: %1$s</string>
+    <string name="only_left">Tersisa %1$s saja</string>
+    <string name="quantity_hint">Jumlah reservasi</string>
+    <string name="reservation_error_stock">Stok tidak cukup untuk reservasi ini</string>
+    <string name="reservation_error_quantity">Masukkan jumlah yang valid</string>
+    <string name="reservation_error_generic">Reservasi tidak dapat diselesaikan</string>
+    <string name="reservation_hold_notice">Ditahan 30 menit. Konfirmasi dengan penjual sebelum kedaluwarsa.</string>
+    <string name="product_reserved">Produk direservasi</string>
+    <string name="unit_piece">unit</string>
+    <string name="unit_box">kotak</string>
+    <string name="unit_bunch">ikat</string>
+</resources>

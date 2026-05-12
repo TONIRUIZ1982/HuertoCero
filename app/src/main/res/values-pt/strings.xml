@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">HuertoCero</string>
+    <string name="language">Idioma</string>
+    <string name="language_title">Alterar idioma</string>
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
+    <string name="reserve">Reservar</string>
+    <string name="chat">Chat</string>
+    <string name="favorite">Favorito</string>
+    <string name="navigate">Direções</string>
+    <string name="price_hint">Preço</string>
+    <string name="stock_total_hint">Stock total disponível</string>
+    <string name="available_stock">Disponível: %1$s</string>
+    <string name="only_left">Só restam %1$s</string>
+    <string name="quantity_hint">Quantidade a reservar</string>
+    <string name="reservation_error_stock">Não há stock suficiente para esta reserva</string>
+    <string name="reservation_error_quantity">Introduz uma quantidade válida</string>
+    <string name="reservation_error_generic">Não foi possível concluir a reserva</string>
+    <string name="reservation_hold_notice">Reservado por 30 min. Confirma com o vendedor antes de expirar.</string>
+    <string name="product_reserved">Produto reservado</string>
+    <string name="unit_piece">unidade</string>
+    <string name="unit_box">caixa</string>
+    <string name="unit_bunch">molho</string>
+</resources>
