@@ -3,4 +3,12 @@
         <item quantity="one">%1$d producto encontrado</item>
         <item quantity="other">%1$d productos encontrados</item>
     </plurals>
+    <plurals name="minutes_ago">
+        <item quantity="one">Hace %1$d min</item>
+        <item quantity="other">Hace %1$d min</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">Hace %1$d h</item>
+        <item quantity="other">Hace %1$d h</item>
+    </plurals>
 </resources>

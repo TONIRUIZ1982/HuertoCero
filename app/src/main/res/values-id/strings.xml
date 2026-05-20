@@ -16,7 +16,7 @@
     <string name="reservation_error_stock">Stok tidak cukup untuk reservasi ini</string>
     <string name="reservation_error_quantity">Masukkan jumlah yang valid</string>
     <string name="reservation_error_generic">Reservasi tidak dapat diselesaikan</string>
-    <string name="reservation_hold_notice">Ditahan 30 menit. Konfirmasi dengan penjual sebelum kedaluwarsa.</string>
+    <string name="reservation_hold_notice">Ditahan 1 jam. Konfirmasi dengan penjual sebelum kedaluwarsa.</string>
     <string name="product_reserved">Produk direservasi</string>
     <string name="unit_piece">unit</string>
     <string name="unit_box">kotak</string>

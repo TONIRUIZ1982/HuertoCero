@@ -54,12 +54,24 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tvHomeGreeting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/near_you"
+                    android:text="@string/home_greeting_default"
                     android:textColor="@android:color/white"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvHomeSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/home_discovery_subtitle"
+                    android:textColor="#DDF6F1E9"
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <Button
@@ -142,157 +154,150 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <LinearLayout
+    <HorizontalScrollView
         android:id="@+id/quickActionsGrid"
         android:layout_width="match_parent"
-        android:layout_height="184dp"
+        android:layout_height="76dp"
         android:layout_gravity="top"
-        android:layout_marginTop="176dp"
-        android:orientation="vertical"
+        android:layout_marginTop="168dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
         android:paddingStart="18dp"
-        android:paddingEnd="18dp">
+        android:paddingEnd="18dp"
+        android:scrollbars="none">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/btnQuickSell"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="128dp"
+                android:layout_height="62dp"
                 android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/action_tile_background"
+                android:background="@drawable/action_pill_background"
                 android:clickable="true"
-                android:elevation="12dp"
+                android:drawableStart="@drawable/ic_quick_sell"
+                android:drawablePadding="8dp"
+                android:elevation="10dp"
                 android:focusable="true"
-                android:drawableTop="@drawable/ic_quick_sell"
-                android:drawablePadding="6dp"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:maxLines="1"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:text="@string/quick_sell"
                 android:textColor="@color/brand_olive"
-                android:textSize="15sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/btnQuickMap"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/action_tile_background"
+                android:layout_width="128dp"
+                android:layout_height="62dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/action_pill_background"
                 android:clickable="true"
-                android:elevation="12dp"
+                android:drawableStart="@drawable/ic_quick_map"
+                android:drawablePadding="8dp"
+                android:elevation="10dp"
                 android:focusable="true"
-                android:drawableTop="@drawable/ic_quick_map"
-                android:drawablePadding="6dp"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:maxLines="1"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:text="@string/quick_map"
                 android:textColor="@color/brand_olive"
-                android:textSize="15sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/btnQuickReservations"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/action_tile_background"
+                android:layout_width="138dp"
+                android:layout_height="62dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/action_pill_background"
                 android:clickable="true"
-                android:elevation="12dp"
+                android:drawableStart="@drawable/ic_quick_bookings"
+                android:drawablePadding="8dp"
+                android:elevation="10dp"
                 android:focusable="true"
-                android:drawableTop="@drawable/ic_quick_bookings"
-                android:drawablePadding="6dp"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:maxLines="1"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:text="@string/quick_reservations"
                 android:textColor="@color/brand_olive"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="12dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/btnQuickFavorites"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="138dp"
+                android:layout_height="62dp"
                 android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/action_tile_background"
+                android:background="@drawable/action_pill_background"
                 android:clickable="true"
-                android:elevation="12dp"
+                android:drawableStart="@drawable/ic_quick_favorites"
+                android:drawablePadding="8dp"
+                android:elevation="10dp"
                 android:focusable="true"
-                android:drawableTop="@drawable/ic_quick_favorites"
-                android:drawablePadding="6dp"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:maxLines="1"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:text="@string/quick_favorites"
                 android:textColor="@color/brand_olive"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/btnQuickInvite"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/action_tile_accent_background"
+                android:layout_width="128dp"
+                android:layout_height="62dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/action_pill_accent_background"
                 android:clickable="true"
-                android:elevation="14dp"
+                android:drawableStart="@drawable/ic_quick_invite"
+                android:drawablePadding="8dp"
+                android:elevation="12dp"
                 android:focusable="true"
-                android:drawableTop="@drawable/ic_quick_invite"
-                android:drawablePadding="6dp"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:maxLines="1"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:text="@string/quick_invite"
                 android:textColor="@color/brand_olive"
-                android:textSize="15sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/btnQuickImpact"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/action_tile_background"
+                android:layout_width="128dp"
+                android:layout_height="62dp"
+                android:background="@drawable/action_pill_background"
                 android:clickable="true"
-                android:elevation="12dp"
+                android:drawableStart="@drawable/ic_quick_impact"
+                android:drawablePadding="8dp"
+                android:elevation="10dp"
                 android:focusable="true"
-                android:drawableTop="@drawable/ic_quick_impact"
-                android:drawablePadding="6dp"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:maxLines="1"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
                 android:text="@string/quick_impact"
                 android:textColor="@color/brand_olive"
-                android:textSize="15sp"
+                android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
-    </LinearLayout>
+    </HorizontalScrollView>
 
     <TextView
         android:id="@+id/mapCreateHint"
@@ -314,9 +319,9 @@
     <LinearLayout
         android:id="@+id/productFeedPanel"
         android:layout_width="match_parent"
-        android:layout_height="204dp"
+        android:layout_height="326dp"
         android:layout_gravity="top"
-        android:layout_marginTop="386dp"
+        android:layout_marginTop="262dp"
         android:orientation="vertical"
         android:paddingStart="18dp"
         android:paddingEnd="0dp">
@@ -373,21 +378,21 @@
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="84dp"
+        android:layout_height="78dp"
         android:layout_gravity="bottom"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="44dp"
+        android:layout_marginBottom="42dp"
         android:background="@drawable/nav_bar_background"
         android:backgroundTint="@null"
-        android:elevation="26dp"
+        android:elevation="30dp"
         android:gravity="center"
         android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/btnFavorites"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="58dp"
             android:layout_marginEnd="7dp"
             android:layout_weight="1"
             android:background="@drawable/nav_item_active_background"
@@ -395,13 +400,13 @@
             android:focusable="true"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="7dp">
+            android:paddingTop="7dp"
+            android:paddingBottom="6dp">
 
             <ImageView
                 android:id="@+id/iconNavHome"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
                 android:contentDescription="@string/nav_home"
                 android:src="@drawable/ic_nav_home"
                 android:tint="@android:color/white" />
@@ -422,7 +427,7 @@
         <LinearLayout
             android:id="@+id/btnMessages"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="58dp"
             android:layout_marginHorizontal="7dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
@@ -430,13 +435,13 @@
             android:focusable="true"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="7dp">
+            android:paddingTop="7dp"
+            android:paddingBottom="6dp">
 
             <ImageView
                 android:id="@+id/iconNavChat"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
                 android:contentDescription="@string/nav_messages"
                 android:src="@drawable/ic_nav_chat"
                 android:tint="@color/muted_ink" />
@@ -457,7 +462,7 @@
         <LinearLayout
             android:id="@+id/btnPrivacy"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="58dp"
             android:layout_marginStart="7dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
@@ -465,13 +470,13 @@
             android:focusable="true"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="7dp">
+            android:paddingTop="7dp"
+            android:paddingBottom="6dp">
 
             <ImageView
                 android:id="@+id/iconNavProfile"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
                 android:contentDescription="@string/nav_profile"
                 android:src="@drawable/ic_nav_profile"
                 android:tint="@color/muted_ink" />

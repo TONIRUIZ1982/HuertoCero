@@ -6,7 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Date
 
 object ReservationService {
-    private const val HOLD_MINUTES = 30L
+    private const val HOLD_MINUTES = 60L
 
     fun reserveProduct(
         db: FirebaseFirestore,

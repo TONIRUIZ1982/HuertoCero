@@ -16,7 +16,7 @@
     <string name="reservation_error_stock">Stock insufficiente per questa prenotazione</string>
     <string name="reservation_error_quantity">Inserisci una quantità valida</string>
     <string name="reservation_error_generic">Impossibile completare la prenotazione</string>
-    <string name="reservation_hold_notice">Prenotato per 30 min. Conferma con il venditore prima della scadenza.</string>
+    <string name="reservation_hold_notice">Prenotato per 1 ora. Conferma con il venditore prima della scadenza.</string>
     <string name="product_reserved">Prodotto prenotato</string>
     <string name="unit_piece">unità</string>
     <string name="unit_box">cassetta</string>

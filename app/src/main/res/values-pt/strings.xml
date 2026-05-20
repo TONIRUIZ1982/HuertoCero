@@ -16,7 +16,7 @@
     <string name="reservation_error_stock">Não há stock suficiente para esta reserva</string>
     <string name="reservation_error_quantity">Introduz uma quantidade válida</string>
     <string name="reservation_error_generic">Não foi possível concluir a reserva</string>
-    <string name="reservation_hold_notice">Reservado por 30 min. Confirma com o vendedor antes de expirar.</string>
+    <string name="reservation_hold_notice">Reservado por 1 hora. Confirma com o vendedor antes de expirar.</string>
     <string name="product_reserved">Produto reservado</string>
     <string name="unit_piece">unidade</string>
     <string name="unit_box">caixa</string>

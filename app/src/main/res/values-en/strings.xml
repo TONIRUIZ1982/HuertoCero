@@ -87,7 +87,7 @@
     <string name="reservation_error_stock">There is not enough stock for that reservation</string>
     <string name="reservation_error_quantity">Enter a valid quantity</string>
     <string name="reservation_error_generic">Could not complete the reservation</string>
-    <string name="reservation_hold_notice">Reserved for 30 min. Confirm with the seller before it expires.</string>
+    <string name="reservation_hold_notice">Reserved for 1 hour. Confirm with the seller before it expires.</string>
     <string name="unit_piece">unit</string>
     <string name="unit_box">box</string>
     <string name="unit_bunch">bunch</string>
@@ -146,6 +146,7 @@
     <string name="category_other">Other</string>
     <string name="back">Back</string>
     <string name="delete">Delete</string>
+    <string name="remove_action">Remove</string>
     <string name="edit">Edit</string>
     <string name="send">Send</string>
     <string name="message_hint">Write a message</string>

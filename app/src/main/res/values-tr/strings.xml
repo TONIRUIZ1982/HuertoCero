@@ -16,7 +16,7 @@
     <string name="reservation_error_stock">Bu rezervasyon için yeterli stok yok</string>
     <string name="reservation_error_quantity">Geçerli bir miktar gir</string>
     <string name="reservation_error_generic">Rezervasyon tamamlanamadı</string>
-    <string name="reservation_hold_notice">30 dakika tutuldu. Süresi dolmadan satıcıyla onayla.</string>
+    <string name="reservation_hold_notice">1 saat tutuldu. Süresi dolmadan satıcıyla onayla.</string>
     <string name="product_reserved">Ürün rezerve edildi</string>
     <string name="unit_piece">adet</string>
     <string name="unit_box">kutu</string>

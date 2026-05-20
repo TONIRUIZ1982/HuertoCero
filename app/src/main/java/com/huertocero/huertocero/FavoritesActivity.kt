@@ -27,6 +27,7 @@ class FavoritesActivity : HuertoActivity() {
         tvEmpty = findViewById(R.id.tvEmpty)
         btnBack = findViewById(R.id.btnBack)
 
+        UiMotion.makePressable(btnBack)
         btnBack.setOnClickListener { finish() }
         loadFavorites()
     }
@@ -63,6 +64,7 @@ class FavoritesActivity : HuertoActivity() {
                         val price = doc.getDouble("price") ?: 0.0
                         val currency = doc.getString("currency") ?: "EUR"
 
+                        UiMotion.makePressable(btnDelete)
                         name.text = "$productName - ${
                             MarketFormat.formatMoney(this@FavoritesActivity, price, currency)
                         }"

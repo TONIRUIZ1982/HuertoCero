@@ -16,7 +16,7 @@
     <string name="reservation_error_stock">Stock insuffisant pour cette réservation</string>
     <string name="reservation_error_quantity">Saisis une quantité valide</string>
     <string name="reservation_error_generic">Impossible de finaliser la réservation</string>
-    <string name="reservation_hold_notice">Réservé pendant 30 min. Confirme avec le vendeur avant expiration.</string>
+    <string name="reservation_hold_notice">Réservé pendant 1 heure. Confirme avec le vendeur avant expiration.</string>
     <string name="product_reserved">Produit réservé</string>
     <string name="unit_piece">unité</string>
     <string name="unit_box">caisse</string>

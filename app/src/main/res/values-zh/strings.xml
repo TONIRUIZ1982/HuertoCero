@@ -16,7 +16,7 @@
     <string name="reservation_error_stock">库存不足，无法完成该预订</string>
     <string name="reservation_error_quantity">请输入有效数量</string>
     <string name="reservation_error_generic">无法完成预订</string>
-    <string name="reservation_hold_notice">已保留 30 分钟。请在到期前与卖家确认。</string>
+    <string name="reservation_hold_notice">已保留 1 小时。请在到期前与卖家确认。</string>
     <string name="product_reserved">产品已预订</string>
     <string name="unit_piece">件</string>
     <string name="unit_box">箱</string>

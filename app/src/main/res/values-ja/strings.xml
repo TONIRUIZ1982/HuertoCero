@@ -16,7 +16,7 @@
     <string name="reservation_error_stock">この予約に必要な在庫が足りません</string>
     <string name="reservation_error_quantity">有効な数量を入力してください</string>
     <string name="reservation_error_generic">予約を完了できませんでした</string>
-    <string name="reservation_hold_notice">30分間確保されました。期限前に販売者へ確認してください。</string>
+    <string name="reservation_hold_notice">1時間確保されました。期限前に販売者へ確認してください。</string>
     <string name="product_reserved">商品を予約しました</string>
     <string name="unit_piece">個</string>
     <string name="unit_box">箱</string>

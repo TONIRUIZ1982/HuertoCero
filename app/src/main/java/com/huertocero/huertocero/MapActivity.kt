@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -28,6 +29,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -58,10 +60,13 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageMetadata
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 
+import java.io.ByteArrayOutputStream
 import kotlin.math.abs
+import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
@@ -83,6 +88,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
     private var activeSearchQuery = ""
     private var searchSortMode = SearchSort.RELEVANCE
     private var userLatLng: LatLng? = null
+    private var productsLoading = true
     private val followedCategoryCache = mutableSetOf<String>()
     private val followedSellerCache = mutableSetOf<String>()
 
@@ -150,6 +156,8 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
             findViewById(R.id.productFeedPanel),
             findViewById(R.id.bottomNav)
         )
+        updateHomeHero()
+        adjustHomeLayoutForViewport()
         playScreenTransition()
 
         findViewById<Button>(R.id.btnLogout).setOnClickListener {
@@ -283,6 +291,29 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
             renderProductsOnMap()
         } else if (!enabled) {
             renderProductRail(filteredProductsForCurrentCategory())
+            adjustHomeLayoutForViewport()
+        }
+    }
+
+    private fun adjustHomeLayoutForViewport() {
+        val root = findViewById<View?>(R.id.homeRoot) ?: return
+        val feedPanel = findViewById<View?>(R.id.productFeedPanel) ?: return
+        val bottomNav = findViewById<View?>(R.id.bottomNav) ?: return
+
+        feedPanel.post {
+            val rootHeight = root.height
+            if (rootHeight <= 0) return@post
+
+            val feedParams = feedPanel.layoutParams as? FrameLayout.LayoutParams ?: return@post
+            val navParams = bottomNav.layoutParams as? FrameLayout.LayoutParams ?: return@post
+            val navTop = rootHeight - navParams.bottomMargin - navParams.height
+            val availableHeight = navTop - feedParams.topMargin - dp(20)
+            val targetHeight = availableHeight.coerceIn(dp(230), dp(326))
+
+            if (feedParams.height != targetHeight) {
+                feedParams.height = targetHeight
+                feedPanel.layoutParams = feedParams
+            }
         }
     }
 
@@ -291,17 +322,26 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         button.setBackgroundResource(if (active) R.drawable.nav_item_active_background else android.R.color.transparent)
         val color = ContextCompat.getColor(this, if (active) android.R.color.white else R.color.muted_ink)
         button.isSelected = active
+        button.alpha = if (active) 1f else 0.88f
+        button.elevation = if (active) dp(8).toFloat() else 0f
         button.animate()
-            .scaleX(if (active) 1.02f else 1f)
-            .scaleY(if (active) 1.02f else 1f)
-            .setDuration(180L)
+            .alpha(if (active) 1f else 0.88f)
+            .scaleX(if (active) 1.04f else 1f)
+            .scaleY(if (active) 1.04f else 1f)
+            .setDuration(220L)
             .start()
 
         if (button is LinearLayout) {
             for (index in 0 until button.childCount) {
                 when (val child = button.getChildAt(index)) {
-                    is ImageView -> child.setColorFilter(color)
-                    is TextView -> child.setTextColor(color)
+                    is ImageView -> {
+                        child.setColorFilter(color)
+                        child.alpha = if (active) 1f else 0.82f
+                    }
+                    is TextView -> {
+                        child.setTextColor(color)
+                        child.alpha = if (active) 1f else 0.82f
+                    }
                 }
             }
         } else if (button is Button) {
@@ -383,6 +423,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
     private fun moveToLocation(location: Location) {
         userLatLng = LatLng(location.latitude, location.longitude)
         NotificationProfile.syncLocation(userLatLng ?: return)
+        updateHomeHero()
         map.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
                 userLatLng ?: LatLng(location.latitude, location.longitude),
@@ -433,6 +474,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         val fallback = regionalFallback()
         userLatLng = fallback.first
         NotificationProfile.syncLocation(fallback.first)
+        updateHomeHero()
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(fallback.first, fallback.second))
     }
 
@@ -512,10 +554,32 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun updateHomeHero() {
+        val greeting = findViewById<TextView?>(R.id.tvHomeGreeting)
+        val subtitle = findViewById<TextView?>(R.id.tvHomeSubtitle)
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        greeting?.text = when (hour) {
+            in 5..11 -> getString(R.string.home_greeting_morning)
+            in 12..18 -> getString(R.string.home_greeting_afternoon)
+            else -> getString(R.string.home_greeting_evening)
+        }
+
+        val activeLocation = userLatLng != null
+        subtitle?.text = if (activeLocation) {
+            getString(R.string.home_discovery_subtitle_location)
+        } else {
+            getString(R.string.home_discovery_subtitle)
+        }
+    }
+
     private fun loadProducts() {
         db.collection("products")
             .addSnapshotListener { result, error ->
-                if (error != null || result == null) return@addSnapshotListener
+                if (error != null || result == null) {
+                    productsLoading = false
+                    renderProductRail(filteredProductsForCurrentCategory())
+                    return@addSnapshotListener
+                }
 
                 allProducts.clear()
 
@@ -536,6 +600,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
                 }
 
                 hasLoadedInitialProducts = true
+                productsLoading = false
                 renderProductsOnMap()
             }
     }
@@ -913,6 +978,17 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
 
         val title = findViewById<TextView?>(R.id.tvFeedTitle)
         val badge = findViewById<TextView?>(R.id.tvFeedBadge)
+
+        if (productsLoading) {
+            panel.visibility = View.VISIBLE
+            title?.text = getString(R.string.discovery_loading_title)
+            badge?.text = getString(R.string.discovery_live_badge)
+            repeat(3) { index ->
+                rail.addView(createSkeletonFeedCard(index))
+            }
+            return
+        }
+
         val todayDrops = products.filter { isFreshToday(it) }.sortedByDescending { feedScore(it) }
         val isDiscoveryHome = activeSearchQuery.isBlank() && selectedCategoryFilter == ProductCategories.FILTER_ALL
         val displayProducts = if (isDiscoveryHome && todayDrops.isNotEmpty()) {
@@ -936,13 +1012,81 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun createSkeletonFeedCard(index: Int): View {
+        val card = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            background = ContextCompat.getDrawable(this@MapActivity, R.drawable.feed_card_background)
+            elevation = dp(8).toFloat()
+            setPadding(dp(10), dp(10), dp(10), dp(12))
+        }
+
+        val image = skeletonBlock(LinearLayout.LayoutParams.MATCH_PARENT, dp(136), 22)
+        val title = skeletonBlock(LinearLayout.LayoutParams.MATCH_PARENT, dp(18), 9)
+        val meta = skeletonBlock(dp(150), dp(14), 8)
+        val badges = skeletonBlock(dp(178), dp(24), 12)
+        val action = skeletonBlock(LinearLayout.LayoutParams.MATCH_PARENT, dp(32), 16)
+
+        card.addView(image)
+        card.addView(title, LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            dp(18)
+        ).apply {
+            topMargin = dp(12)
+        })
+        card.addView(meta, LinearLayout.LayoutParams(dp(150), dp(14)).apply {
+            topMargin = dp(9)
+        })
+        card.addView(badges, LinearLayout.LayoutParams(dp(178), dp(24)).apply {
+            topMargin = dp(12)
+        })
+        card.addView(action, LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            dp(32)
+        ).apply {
+            topMargin = dp(12)
+        })
+
+        listOf(image, title, meta, badges, action).forEach { animateSkeleton(it, index * 120L) }
+
+        return card.apply {
+            layoutParams = LinearLayout.LayoutParams(dp(226), LinearLayout.LayoutParams.MATCH_PARENT).apply {
+                marginEnd = dp(14)
+            }
+        }
+    }
+
+    private fun skeletonBlock(width: Int, height: Int, radius: Int): View {
+        return View(this).apply {
+            background = android.graphics.drawable.GradientDrawable().apply {
+                setColor(ContextCompat.getColor(this@MapActivity, R.color.brand_mint))
+                cornerRadius = dp(radius).toFloat()
+            }
+            layoutParams = LinearLayout.LayoutParams(width, height)
+        }
+    }
+
+    private fun animateSkeleton(view: View, delay: Long) {
+        view.alpha = 0.48f
+        view.animate()
+            .alpha(0.88f)
+            .setStartDelay(delay)
+            .setDuration(620L)
+            .withEndAction {
+                if (productsLoading && view.isAttachedToWindow) {
+                    view.animate().alpha(0.48f).setDuration(620L).withEndAction {
+                        if (productsLoading && view.isAttachedToWindow) animateSkeleton(view, 0L)
+                    }.start()
+                }
+            }
+            .start()
+    }
+
     private fun createFeedCard(product: Product): View {
         val card = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            background = ContextCompat.getDrawable(this@MapActivity, R.drawable.auth_card_background)
-            elevation = dp(8).toFloat()
-            gravity = android.view.Gravity.CENTER_VERTICAL
-            setPadding(dp(10), dp(10), dp(12), dp(10))
+            orientation = LinearLayout.VERTICAL
+            background = ContextCompat.getDrawable(this@MapActivity, R.drawable.feed_card_background)
+            elevation = dp(12).toFloat()
+            setPadding(dp(10), dp(10), dp(10), dp(12))
             isClickable = true
             isFocusable = true
         }
@@ -952,20 +1096,19 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
             contentDescription = getString(R.string.product_image)
             scaleType = ImageView.ScaleType.CENTER_CROP
         }
-        card.addView(image, LinearLayout.LayoutParams(dp(106), dp(106)))
+        card.addView(image, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(136)))
 
         val content = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            gravity = android.view.Gravity.CENTER_VERTICAL
         }
-        card.addView(content, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f).apply {
-            marginStart = dp(10)
+        card.addView(content, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f).apply {
+            topMargin = dp(10)
         })
 
         val title = TextView(this).apply {
             text = product.name
             setTextColor(ContextCompat.getColor(this@MapActivity, R.color.ink))
-            textSize = 14f
+            textSize = 16f
             typeface = Typeface.DEFAULT_BOLD
             maxLines = 1
             ellipsize = android.text.TextUtils.TruncateAt.END
@@ -975,11 +1118,12 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         val meta = TextView(this).apply {
             text = buildFeedMeta(product)
             setTextColor(ContextCompat.getColor(this@MapActivity, R.color.muted_ink))
-            textSize = 11f
-            maxLines = 1
+            textSize = 12f
+            maxLines = 2
+            ellipsize = android.text.TextUtils.TruncateAt.END
         }
         content.addView(meta, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
-            topMargin = dp(2)
+            topMargin = dp(4)
         })
 
         val badges = discoveryBadges(product)
@@ -997,7 +1141,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
                 })
             }
             content.addView(badgeRow, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
-                topMargin = dp(7)
+                topMargin = dp(9)
             })
         }
 
@@ -1008,7 +1152,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         val price = TextView(this).apply {
             text = MarketFormat.formatMoney(this@MapActivity, product.getPriceAsDouble(), product.normalizedCurrency())
             setTextColor(ContextCompat.getColor(this@MapActivity, R.color.green_primary))
-            textSize = 13f
+            textSize = 15f
             typeface = Typeface.DEFAULT_BOLD
         }
         val add = TextView(this).apply {
@@ -1021,9 +1165,9 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
             maxLines = 1
         }
         bottom.addView(price, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        bottom.addView(add, LinearLayout.LayoutParams(dp(78), dp(30)))
+        bottom.addView(add, LinearLayout.LayoutParams(dp(80), dp(32)))
         content.addView(bottom, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
-            topMargin = dp(8)
+            topMargin = dp(10)
         })
 
         Glide.with(this)
@@ -1040,7 +1184,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         }
 
         return card.apply {
-            layoutParams = LinearLayout.LayoutParams(dp(336), LinearLayout.LayoutParams.MATCH_PARENT).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(226), LinearLayout.LayoutParams.MATCH_PARENT).apply {
                 marginEnd = dp(14)
             }
         }
@@ -1049,10 +1193,10 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
     private fun createEmptyHeroCard(): View {
         val card = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
-            background = ContextCompat.getDrawable(this@MapActivity, R.drawable.auth_card_background)
-            elevation = dp(8).toFloat()
+            background = ContextCompat.getDrawable(this@MapActivity, R.drawable.feed_card_background)
+            elevation = dp(12).toFloat()
             gravity = android.view.Gravity.CENTER_VERTICAL
-            setPadding(dp(10), dp(10), dp(12), dp(10))
+            setPadding(dp(14), dp(14), dp(16), dp(14))
             isClickable = true
             isFocusable = true
         }
@@ -1102,7 +1246,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         }
 
         return card.apply {
-            layoutParams = LinearLayout.LayoutParams(dp(336), LinearLayout.LayoutParams.MATCH_PARENT).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(354), LinearLayout.LayoutParams.MATCH_PARENT).apply {
                 marginEnd = dp(14)
             }
         }
@@ -1129,11 +1273,33 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         } else {
             parts.add(getString(R.string.distance_km, distance))
         }
-        if (isFreshToday(product)) parts.add(getString(R.string.new_today))
+        postedAgoLabel(product)?.let { parts.add(it) } ?: run {
+            if (isFreshToday(product)) parts.add(getString(R.string.new_today))
+        }
+        if (product.getReservationCountAsLong() >= 2) {
+            parts.add(getString(R.string.recently_reserved))
+        }
+        if (product.getFavoriteCountAsLong() >= 3) {
+            parts.add(getString(R.string.high_demand))
+        }
         if (product.getAvailableStock() in 0.1..2.0) {
             parts.add(getString(R.string.only_left, MarketFormat.formatQuantity(this, product.getAvailableStock(), product.normalizedUnit())))
         }
         return parts.joinToString("  -  ")
+    }
+
+    private fun postedAgoLabel(product: Product): String? {
+        val createdAt = product.createdAt?.toDate()?.time ?: return null
+        val minutes = ((System.currentTimeMillis() - createdAt) / 60_000L).coerceAtLeast(0L)
+        return when {
+            minutes < 2L -> getString(R.string.just_published)
+            minutes < 60L -> resources.getQuantityString(R.plurals.minutes_ago, minutes.toInt(), minutes.toInt())
+            minutes < 24L * 60L -> {
+                val hours = (minutes / 60L).toInt().coerceAtLeast(1)
+                resources.getQuantityString(R.plurals.hours_ago, hours, hours)
+            }
+            else -> null
+        }
     }
 
     private fun discoveryBadges(product: Product): List<Pair<String, Boolean>> {
@@ -1144,6 +1310,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         if (isFreshToday(product)) badges.add(getString(R.string.new_today) to false)
         if (distance != null && distance <= 2.0) badges.add(getString(R.string.badge_nearby) to false)
         if (isLowStock) badges.add(getString(R.string.badge_low_stock) to true)
+        if (product.getReservationCountAsLong() >= 2) badges.add(getString(R.string.recently_reserved) to false)
         if (product.getReservationCountAsLong() >= 3 || product.getFavoriteCountAsLong() >= 3) {
             badges.add(getString(R.string.badge_popular) to false)
         }
@@ -2115,10 +2282,20 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
             return
         }
 
-        val imageRef = storage.reference
-            .child("product_images/$sellerId/${System.currentTimeMillis()}_${imageUri.lastPathSegment ?: "product"}.jpg")
+        val imageBytes = compressImageForUpload(imageUri)
+        if (imageBytes == null) {
+            Toast.makeText(this, getString(R.string.image_upload_error), Toast.LENGTH_LONG).show()
+            onComplete(false)
+            return
+        }
 
-        imageRef.putFile(imageUri)
+        val imageRef = storage.reference
+            .child("product_images/$sellerId/${System.currentTimeMillis()}.jpg")
+        val metadata = StorageMetadata.Builder()
+            .setContentType("image/jpeg")
+            .build()
+
+        imageRef.putBytes(imageBytes, metadata)
             .continueWithTask { task ->
                 if (!task.isSuccessful) {
                     task.exception?.let { throw it }
@@ -2132,6 +2309,53 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
                 Toast.makeText(this, getString(R.string.image_upload_error), Toast.LENGTH_LONG).show()
                 onComplete(false)
             }
+    }
+
+    private fun compressImageForUpload(uri: Uri): ByteArray? {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        contentResolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it, null, bounds)
+        } ?: return null
+
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+
+        val decodeOptions = BitmapFactory.Options().apply {
+            inSampleSize = imageSampleSize(bounds.outWidth, bounds.outHeight, 1600)
+        }
+
+        val bitmap = contentResolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it, null, decodeOptions)
+        } ?: return null
+
+        val largestSide = maxOf(bitmap.width, bitmap.height)
+        val ratio = if (largestSide > 1600) 1600f / largestSide.toFloat() else 1f
+        val uploadBitmap = if (ratio < 1f) {
+            Bitmap.createScaledBitmap(
+                bitmap,
+                (bitmap.width * ratio).toInt().coerceAtLeast(1),
+                (bitmap.height * ratio).toInt().coerceAtLeast(1),
+                true
+            )
+        } else {
+            bitmap
+        }
+
+        val output = ByteArrayOutputStream()
+        val compressed = uploadBitmap.compress(Bitmap.CompressFormat.JPEG, 82, output)
+
+        if (uploadBitmap !== bitmap) uploadBitmap.recycle()
+        bitmap.recycle()
+
+        return if (compressed) output.toByteArray() else null
+    }
+
+    private fun imageSampleSize(width: Int, height: Int, maxSide: Int): Int {
+        var sampleSize = 1
+        var largestSide = maxOf(width, height)
+        while (largestSide / sampleSize > maxSide * 2) {
+            sampleSize *= 2
+        }
+        return sampleSize
     }
 
     private fun setDialogButtonsEnabled(saveButton: Button, addAnotherButton: Button, enabled: Boolean) {

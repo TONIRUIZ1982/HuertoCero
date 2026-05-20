@@ -16,7 +16,7 @@
     <string name="reservation_error_stock">इस आरक्षण के लिए पर्याप्त स्टॉक नहीं है</string>
     <string name="reservation_error_quantity">मान्य मात्रा दर्ज करें</string>
     <string name="reservation_error_generic">आरक्षण पूरा नहीं हो सका</string>
-    <string name="reservation_hold_notice">30 मिनट के लिए आरक्षित। समाप्ति से पहले विक्रेता से पुष्टि करें।</string>
+    <string name="reservation_hold_notice">1 घंटे के लिए आरक्षित। समाप्ति से पहले विक्रेता से पुष्टि करें।</string>
     <string name="product_reserved">उत्पाद आरक्षित</string>
     <string name="unit_piece">इकाई</string>
     <string name="unit_box">डिब्बा</string>

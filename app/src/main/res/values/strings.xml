@@ -23,6 +23,12 @@
     <string name="language">Idioma</string>
     <string name="language_title">Cambiar idioma</string>
     <string name="near_you">Cerca de ti</string>
+    <string name="home_greeting_default">Hola, bienvenido</string>
+    <string name="home_greeting_morning">Buenos dias</string>
+    <string name="home_greeting_afternoon">Buenas tardes</string>
+    <string name="home_greeting_evening">Buenas noches</string>
+    <string name="home_discovery_subtitle">Descubre productos frescos cerca de ti</string>
+    <string name="home_discovery_subtitle_location">Ubicacion activa: productos frescos a tu alrededor</string>
     <string name="search_placeholder">Busca fruta, verdura o productores</string>
     <string name="search_products_title">Buscar productos</string>
     <string name="search_input_hint">Ej. fresas, tomates, miel...</string>
@@ -43,6 +49,11 @@
     <string name="badge_nearby">Muy cerca</string>
     <string name="badge_popular">Popular</string>
     <string name="badge_low_stock">Queda poco</string>
+    <string name="recently_reserved">Reservado recientemente</string>
+    <string name="high_demand">Muy solicitado</string>
+    <string name="just_published">Publicado ahora</string>
+    <string name="discovery_loading_title">Buscando productos cerca</string>
+    <string name="discovery_live_badge">En vivo</string>
     <string name="discovery_for_you">Elegido para ti</string>
     <string name="reserve_one_tap">Reservar</string>
     <string name="quick_reserved">Reservado %1$s en un toque</string>
@@ -89,6 +100,8 @@
     <string name="description_hint">Descripcion</string>
     <string name="price_hint">Precio</string>
     <string name="stock_total_hint">Stock total disponible</string>
+    <string name="unit_label">Unidad</string>
+    <string name="currency_label">Moneda</string>
     <string name="available_stock">Disponible: %1$s</string>
     <string name="reserved_stock">Reservado: %1$s de %2$s</string>
     <string name="only_left">Solo queda %1$s</string>
@@ -96,7 +109,7 @@
     <string name="reservation_error_stock">No queda suficiente stock para esa reserva</string>
     <string name="reservation_error_quantity">Introduce una cantidad valida</string>
     <string name="reservation_error_generic">No se pudo completar la reserva</string>
-    <string name="reservation_hold_notice">Reserva retenida 30 min. Confirma con el vendedor antes de que expire.</string>
+    <string name="reservation_hold_notice">Reserva retenida 1 hora. Confirma con el vendedor antes de que expire.</string>
     <string name="unit_piece">unidad</string>
     <string name="unit_box">caja</string>
     <string name="unit_bunch">manojo</string>
@@ -163,6 +176,7 @@
     <string name="category_other">Otros</string>
     <string name="back">Volver</string>
     <string name="delete">Eliminar</string>
+    <string name="remove_action">Quitar</string>
     <string name="edit">Editar</string>
     <string name="send">Enviar</string>
     <string name="message_hint">Escribe un mensaje</string>

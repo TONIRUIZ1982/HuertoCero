@@ -1,7 +1,10 @@
-const functions = require("firebase-functions");
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
+const { setGlobalOptions } = require("firebase-functions/v2");
 const admin = require("firebase-admin");
 
 admin.initializeApp();
+setGlobalOptions({ region: "europe-southwest1", maxInstances: 10 });
 
 const db = admin.firestore();
 
@@ -36,73 +39,131 @@ function matchesSavedInterest(profile, product) {
   return !profile.onlySavedAlerts;
 }
 
-exports.notifyNearbyProduct = functions.firestore
-  .document("products/{productId}")
-  .onCreate(async (snapshot, context) => {
-    const product = snapshot.data() || {};
-    const lat = Number(product.lat);
-    const lng = Number(product.lng);
-    const sellerId = product.sellerId || "";
+exports.notifyNearbyProduct = onDocumentCreated("products/{productId}", async (event) => {
+  const snapshot = event.data;
+  if (!snapshot) return null;
 
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  const product = snapshot.data() || {};
+  const lat = Number(product.lat);
+  const lng = Number(product.lng);
+  const sellerId = product.sellerId || "";
 
-    const cell = product.geoCell || geoCell(lat, lng);
-    const profiles = await db
-      .collection("notificationProfiles")
-      .where("geoCells", "array-contains", cell)
-      .limit(500)
-      .get();
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
 
-    const messages = [];
-    const messageProfileRefs = [];
-    profiles.forEach((doc) => {
-      const profile = doc.data() || {};
-      const token = profile.fcmToken;
-      const userLat = Number(profile.lat);
-      const userLng = Number(profile.lng);
-      const radiusKm = Number(profile.alertRadiusKm || 8);
+  const cell = product.geoCell || geoCell(lat, lng);
+  const profiles = await db
+    .collection("notificationProfiles")
+    .where("geoCells", "array-contains", cell)
+    .limit(500)
+    .get();
 
-      if (!token || doc.id === sellerId) return;
-      if (!Number.isFinite(userLat) || !Number.isFinite(userLng)) return;
+  const messages = [];
+  const messageProfileRefs = [];
+  profiles.forEach((doc) => {
+    const profile = doc.data() || {};
+    const token = profile.fcmToken;
+    const userLat = Number(profile.lat);
+    const userLng = Number(profile.lng);
+    const radiusKm = Number(profile.alertRadiusKm || 8);
 
-      const km = distanceKm(userLat, userLng, lat, lng);
-      if (km > radiusKm) return;
-      if (!matchesSavedInterest(profile, product)) return;
+    if (!token || doc.id === sellerId) return;
+    if (!Number.isFinite(userLat) || !Number.isFinite(userLng)) return;
 
-      const productName = product.name || "Producto nuevo";
-      messages.push({
-        token,
+    const km = distanceKm(userLat, userLng, lat, lng);
+    if (km > radiusKm) return;
+    if (!matchesSavedInterest(profile, product)) return;
+
+    const productName = product.name || "Producto nuevo";
+    messages.push({
+      token,
+      notification: {
+        title: "Nuevo producto cerca",
+        body: `${productName} a ${km.toFixed(1)} km de ti`
+      },
+      data: {
+        type: "nearby_product",
+        productId: event.params.productId
+      },
+      android: {
+        priority: "high",
         notification: {
-          title: "Nuevo producto cerca",
-          body: `${productName} a ${km.toFixed(1)} km de ti`
-        },
-        data: {
-          type: "nearby_product",
-          productId: context.params.productId
-        },
-        android: {
-          priority: "high",
-          notification: {
-            channelId: "nearby_products",
-            clickAction: "OPEN_PRODUCT"
-          }
-        }
-      });
-      messageProfileRefs.push(doc.ref);
-    });
-
-    if (messages.length === 0) return null;
-
-    const response = await admin.messaging().sendEach(messages);
-    const cleanup = [];
-    response.responses.forEach((result, index) => {
-      if (!result.success) {
-        const code = result.error && result.error.code;
-        if (code === "messaging/registration-token-not-registered") {
-          cleanup.push(messageProfileRefs[index].update({ fcmToken: admin.firestore.FieldValue.delete() }));
+          channelId: "nearby_products",
+          clickAction: "OPEN_PRODUCT"
         }
       }
     });
-    await Promise.all(cleanup);
-    return null;
+    messageProfileRefs.push(doc.ref);
   });
+
+  if (messages.length === 0) return null;
+
+  const response = await admin.messaging().sendEach(messages);
+  const cleanup = [];
+  response.responses.forEach((result, index) => {
+    if (!result.success) {
+      const code = result.error && result.error.code;
+      if (code === "messaging/registration-token-not-registered") {
+        cleanup.push(messageProfileRefs[index].update({ fcmToken: admin.firestore.FieldValue.delete() }));
+      }
+    }
+  });
+  await Promise.all(cleanup);
+  return null;
+});
+
+async function releaseExpiredReservation(reservationRef, nowMillis) {
+  return db.runTransaction(async (transaction) => {
+    const reservationSnapshot = await transaction.get(reservationRef);
+    if (!reservationSnapshot.exists) return;
+
+    const reservation = reservationSnapshot.data() || {};
+    const expiresAt = reservation.expiresAt;
+    const expiresAtMillis = expiresAt && typeof expiresAt.toMillis === "function"
+      ? expiresAt.toMillis()
+      : 0;
+
+    if (reservation.status && reservation.status !== "held") return;
+    if (expiresAtMillis > nowMillis) return;
+
+    const productId = reservation.productId || "";
+    const quantity = Number(reservation.quantity || 0);
+
+    if (productId && quantity > 0) {
+      const productRef = db.collection("products").doc(productId);
+      const productSnapshot = await transaction.get(productRef);
+
+      if (productSnapshot.exists) {
+        const currentReserved = Number(productSnapshot.get("stockReserved") || 0);
+        transaction.update(productRef, {
+          stockReserved: Math.max(0, currentReserved - quantity)
+        });
+      }
+    }
+
+    transaction.delete(reservationRef);
+  });
+}
+
+exports.releaseExpiredReservations = onSchedule(
+  {
+    region: "europe-west1",
+    schedule: "every 5 minutes",
+    timeZone: "Europe/Madrid"
+  },
+  async () => {
+    const now = admin.firestore.Timestamp.now();
+    const expiredReservations = await db
+      .collection("reservas")
+      .where("expiresAt", "<=", now)
+      .limit(100)
+      .get();
+
+    await Promise.all(
+      expiredReservations.docs.map((doc) =>
+        releaseExpiredReservation(doc.ref, now.toMillis())
+      )
+    );
+
+    return null;
+  }
+);

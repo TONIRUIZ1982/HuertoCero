@@ -16,7 +16,7 @@
     <string name="reservation_error_stock">لا يوجد مخزون كاف لهذا الحجز</string>
     <string name="reservation_error_quantity">أدخل كمية صالحة</string>
     <string name="reservation_error_generic">تعذر إكمال الحجز</string>
-    <string name="reservation_hold_notice">محجوز لمدة 30 دقيقة. أكد مع البائع قبل انتهاء المهلة.</string>
+    <string name="reservation_hold_notice">محجوز لمدة ساعة واحدة. أكد مع البائع قبل انتهاء المهلة.</string>
     <string name="product_reserved">تم حجز المنتج</string>
     <string name="unit_piece">وحدة</string>
     <string name="unit_box">صندوق</string>

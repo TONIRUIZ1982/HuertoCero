@@ -27,6 +27,7 @@ class ReservationsActivity : HuertoActivity() {
         tvEmpty = findViewById(R.id.tvEmpty)
         btnBack = findViewById(R.id.btnBack)
 
+        UiMotion.makePressable(btnBack)
         btnBack.setOnClickListener { finish() }
         loadReservations()
     }
@@ -65,6 +66,7 @@ class ReservationsActivity : HuertoActivity() {
                         val quantity = doc.getDouble("quantity") ?: 1.0
                         val unit = doc.getString("unit") ?: "kg"
 
+                        UiMotion.makePressable(btnDelete)
                         tv.text = "$name - ${
                             MarketFormat.formatMoney(this@ReservationsActivity, price, currency)
                         } - ${

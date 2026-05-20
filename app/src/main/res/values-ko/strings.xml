@@ -16,7 +16,7 @@
     <string name="reservation_error_stock">이 예약에 필요한 재고가 부족합니다</string>
     <string name="reservation_error_quantity">올바른 수량을 입력하세요</string>
     <string name="reservation_error_generic">예약을 완료할 수 없습니다</string>
-    <string name="reservation_hold_notice">30분 동안 예약됩니다. 만료 전에 판매자와 확인하세요.</string>
+    <string name="reservation_hold_notice">1시간 동안 예약됩니다. 만료 전에 판매자와 확인하세요.</string>
     <string name="product_reserved">상품이 예약되었습니다</string>
     <string name="unit_piece">개</string>
     <string name="unit_box">상자</string>

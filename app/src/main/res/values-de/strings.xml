@@ -16,7 +16,7 @@
     <string name="reservation_error_stock">Nicht genug Bestand für diese Reservierung</string>
     <string name="reservation_error_quantity">Gib eine gültige Menge ein</string>
     <string name="reservation_error_generic">Reservierung konnte nicht abgeschlossen werden</string>
-    <string name="reservation_hold_notice">30 Min. reserviert. Bitte vor Ablauf mit dem Verkäufer bestätigen.</string>
+    <string name="reservation_hold_notice">1 Stunde reserviert. Bitte vor Ablauf mit dem Verkäufer bestätigen.</string>
     <string name="product_reserved">Produkt reserviert</string>
     <string name="unit_piece">Stück</string>
     <string name="unit_box">Kiste</string>
