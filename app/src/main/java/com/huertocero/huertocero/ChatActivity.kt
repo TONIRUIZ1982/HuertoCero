@@ -41,12 +41,18 @@ class ChatActivity : HuertoActivity() {
         val listMessages = findViewById<ListView>(R.id.listMessages)
         val etMessage = findViewById<EditText>(R.id.etMessage)
         val btnSend = findViewById<Button>(R.id.btnSend)
+        val btnBack = findViewById<Button>(R.id.btnBack)
+        val btnReportChat = findViewById<Button>(R.id.btnReportChat)
+        val chatHeader = findViewById<View>(R.id.chatHeader)
+        val chatInputBar = findViewById<View>(R.id.chatInputBar)
 
         tvTitle.text = productName
-        findViewById<Button>(R.id.btnBack).setOnClickListener { finish() }
-        findViewById<Button>(R.id.btnReportChat).setOnClickListener {
+        btnBack.setOnClickListener { finish() }
+        btnReportChat.setOnClickListener {
             reportConversation(conversationId, productName, userId)
         }
+        UiMotion.makePressable(btnBack, btnReportChat, btnSend)
+        UiMotion.reveal(chatHeader, chatInputBar)
 
         adapter = object : BaseAdapter() {
             override fun getCount(): Int = messages.size
@@ -54,6 +60,7 @@ class ChatActivity : HuertoActivity() {
             override fun getItemId(position: Int): Long = position.toLong()
 
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val isNewView = convertView == null
                 val view = convertView ?: layoutInflater.inflate(R.layout.item_chat_message, parent, false)
                 val row = view.findViewById<LinearLayout>(R.id.messageRow)
                 val message = view.findViewById<TextView>(R.id.tvMessage)
@@ -64,6 +71,9 @@ class ChatActivity : HuertoActivity() {
                 message.text = item.text
                 message.setTextColor(getColor(if (isMine) android.R.color.white else R.color.ink))
                 message.setBackgroundResource(if (isMine) R.drawable.chat_bubble_mine else R.drawable.chat_bubble_other)
+                if (isNewView) {
+                    UiMotion.showSurface(view, fromY = 10f)
+                }
 
                 return view
             }
@@ -110,6 +120,7 @@ class ChatActivity : HuertoActivity() {
                 )
                 .addOnSuccessListener {
                     etMessage.setText("")
+                    UiMotion.celebrate(btnSend)
                     db.collection("conversations")
                         .document(conversationId)
                         .update(

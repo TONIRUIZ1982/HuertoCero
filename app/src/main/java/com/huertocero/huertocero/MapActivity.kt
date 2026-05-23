@@ -18,6 +18,7 @@ import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
@@ -49,8 +50,12 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -72,6 +77,16 @@ import java.util.TimeZone
 
 class MapActivity : HuertoActivity(), OnMapReadyCallback {
 
+    companion object {
+        private const val LOCATION_ZOOM = 14.8f
+        private const val PRODUCT_LOCATION_ZOOM = 16f
+        private const val RECENT_LOCATION_MAX_AGE_MS = 30 * 60 * 1000L
+        private const val LIVE_LOCATION_TIMEOUT_MS = 8_500L
+        private const val GOOGLEPLEX_LAT = 37.4220
+        private const val GOOGLEPLEX_LNG = -122.0841
+        private const val DEFAULT_EMULATOR_RADIUS_METERS = 65_000f
+    }
+
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val db = FirebaseFirestore.getInstance()
@@ -89,6 +104,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
     private var searchSortMode = SearchSort.RELEVANCE
     private var userLatLng: LatLng? = null
     private var productsLoading = true
+    private var activeLocationCallback: LocationCallback? = null
     private val followedCategoryCache = mutableSetOf<String>()
     private val followedSellerCache = mutableSetOf<String>()
 
@@ -106,9 +122,9 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
                 permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
 
             if (granted) {
-                centerMapOnUserLocation()
+                centerMapOnUserLocation(animate = true, showToast = true)
             } else {
-                moveToFallbackLocation()
+                moveToFallbackLocation(animate = true)
                 Toast.makeText(this, getString(R.string.location_permission_needed), Toast.LENGTH_SHORT).show()
             }
         }
@@ -213,9 +229,21 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
+    override fun onDestroy() {
+        activeLocationCallback?.let { callback ->
+            if (::fusedLocationClient.isInitialized) {
+                fusedLocationClient.removeLocationUpdates(callback)
+            }
+        }
+        activeLocationCallback = null
+        super.onDestroy()
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
+        configurePremiumMap()
+        moveToFallbackLocation(animate = false)
         centerMapForCurrentUser()
         updateFilterButtonText()
 
@@ -287,7 +315,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         setNavButtonActive(profileButton, false)
 
         if (enabled && ::map.isInitialized) {
-            centerMapOnUserLocation()
+            centerMapOnUserLocation(animate = true, showToast = true)
             renderProductsOnMap()
         } else if (!enabled) {
             renderProductRail(filteredProductsForCurrentCategory())
@@ -383,7 +411,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
 
     private fun centerMapForCurrentUser() {
         if (hasLocationPermission()) {
-            centerMapOnUserLocation()
+            centerMapOnUserLocation(animate = false, showToast = false)
         } else {
             locationPermissionLauncher.launch(
                 arrayOf(
@@ -405,10 +433,43 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
             ) == PackageManager.PERMISSION_GRANTED
     }
 
+    private fun hasFineLocationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun locationPriority(): Int {
+        return if (hasFineLocationPermission()) {
+            Priority.PRIORITY_HIGH_ACCURACY
+        } else {
+            Priority.PRIORITY_BALANCED_POWER_ACCURACY
+        }
+    }
+
+    private fun configurePremiumMap() {
+        if (!::map.isInitialized) return
+
+        runCatching {
+            map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.huerto_map_style))
+        }
+
+        map.uiSettings.apply {
+            isCompassEnabled = true
+            isMapToolbarEnabled = false
+            isMyLocationButtonEnabled = true
+            isRotateGesturesEnabled = true
+            isTiltGesturesEnabled = true
+            isZoomControlsEnabled = false
+        }
+        map.setPadding(dp(12), dp(78), dp(12), dp(132))
+    }
+
     @SuppressLint("MissingPermission")
-    private fun centerMapOnUserLocation() {
+    private fun centerMapOnUserLocation(animate: Boolean = false, showToast: Boolean = false) {
         if (!::map.isInitialized || !hasLocationPermission()) {
-            moveToFallbackLocation()
+            moveToFallbackLocation(animate = animate)
             return
         }
 
@@ -417,65 +478,173 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
             map.uiSettings.isMyLocationButtonEnabled = true
         }
 
-        requestFreshLocationOrFallback()
+        requestFreshLocationOrFallback(animate, showToast)
     }
 
-    private fun moveToLocation(location: Location) {
-        userLatLng = LatLng(location.latitude, location.longitude)
-        NotificationProfile.syncLocation(userLatLng ?: return)
+    private fun moveToLocation(location: Location, animate: Boolean) {
+        val latLng = LatLng(location.latitude, location.longitude)
+        userLatLng = latLng
+        NotificationProfile.syncLocation(latLng)
         updateHomeHero()
-        map.moveCamera(
-            CameraUpdateFactory.newLatLngZoom(
-                userLatLng ?: LatLng(location.latitude, location.longitude),
-                13f
-            )
-        )
+        moveCameraTo(latLng, LOCATION_ZOOM, animate)
     }
 
     @SuppressLint("MissingPermission")
-    private fun requestFreshLocationOrFallback() {
+    private fun requestFreshLocationOrFallback(animate: Boolean, showToast: Boolean) {
         val cancellation = CancellationTokenSource()
         fusedLocationClient
-            .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellation.token)
+            .getCurrentLocation(locationPriority(), cancellation.token)
             .addOnSuccessListener { location ->
-                if (location != null) {
-                    moveToLocation(location)
+                if (location != null && isUsableDeviceLocation(location)) {
+                    moveToLocation(location, animate)
                 } else {
-                    moveToLastKnownOrFallback(showToast = true)
+                    requestLiveLocationFix(animate, showToast)
                 }
             }
             .addOnFailureListener {
-                moveToLastKnownOrFallback(showToast = true)
+                requestLiveLocationFix(animate, showToast)
             }
     }
 
     @SuppressLint("MissingPermission")
-    private fun moveToLastKnownOrFallback(showToast: Boolean) {
+    private fun requestLiveLocationFix(animate: Boolean, showToast: Boolean) {
+        if (!hasLocationPermission()) {
+            moveToFallbackLocation(animate = animate)
+            return
+        }
+
+        activeLocationCallback?.let { fusedLocationClient.removeLocationUpdates(it) }
+
+        val request = LocationRequest.Builder(locationPriority(), 1_000L)
+            .setMinUpdateIntervalMillis(500L)
+            .setMaxUpdates(3)
+            .setDurationMillis(LIVE_LOCATION_TIMEOUT_MS)
+            .setWaitForAccurateLocation(hasFineLocationPermission())
+            .build()
+
+        val callback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                val location = result.locations
+                    .filter { isUsableDeviceLocation(it) }
+                    .minByOrNull { if (it.hasAccuracy()) it.accuracy else Float.MAX_VALUE }
+                    ?: return
+
+                fusedLocationClient.removeLocationUpdates(this)
+                if (activeLocationCallback === this) activeLocationCallback = null
+                moveToLocation(location, animate = true)
+            }
+        }
+
+        activeLocationCallback = callback
+        fusedLocationClient
+            .requestLocationUpdates(request, callback, Looper.getMainLooper())
+            .addOnFailureListener {
+                if (activeLocationCallback === callback) activeLocationCallback = null
+                moveToLastKnownOrFallback(animate, showToast)
+            }
+
+        findViewById<View?>(R.id.homeRoot)?.postDelayed({
+            if (activeLocationCallback === callback) {
+                fusedLocationClient.removeLocationUpdates(callback)
+                activeLocationCallback = null
+                moveToLastKnownOrFallback(animate, showToast)
+            }
+        }, LIVE_LOCATION_TIMEOUT_MS)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun moveToLastKnownOrFallback(animate: Boolean, showToast: Boolean) {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
-                if (location != null) {
-                    moveToLocation(location)
+                if (location != null && isRecentLocation(location) && isUsableDeviceLocation(location)) {
+                    moveToLocation(location, animate)
                 } else {
-                    moveToFallbackLocation()
+                    moveToFallbackLocation(animate = animate)
                     if (showToast) {
                         Toast.makeText(this, getString(R.string.location_unavailable), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
             .addOnFailureListener {
-                moveToFallbackLocation()
+                moveToFallbackLocation(animate = animate)
                 if (showToast) {
                     Toast.makeText(this, getString(R.string.location_unavailable), Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
-    private fun moveToFallbackLocation() {
+    private fun isRecentLocation(location: Location): Boolean {
+        val age = System.currentTimeMillis() - location.time
+        return location.time > 0L && age in 0..RECENT_LOCATION_MAX_AGE_MS
+    }
+
+    @Suppress("DEPRECATION")
+    private fun isUsableDeviceLocation(location: Location): Boolean {
+        if (isMockLocation(location)) return false
+        return !looksLikeGoogleDefaultLocation(location)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun isMockLocation(location: Location): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            location.isMock
+        } else {
+            location.isFromMockProvider
+        }
+    }
+
+    private fun looksLikeGoogleDefaultLocation(location: Location): Boolean {
+        if (Locale.getDefault().country.equals("US", ignoreCase = true)) return false
+
+        val result = FloatArray(1)
+        Location.distanceBetween(
+            location.latitude,
+            location.longitude,
+            GOOGLEPLEX_LAT,
+            GOOGLEPLEX_LNG,
+            result
+        )
+        return result[0] <= DEFAULT_EMULATOR_RADIUS_METERS
+    }
+
+    private fun moveToFallbackLocation(animate: Boolean = false) {
         val fallback = regionalFallback()
-        userLatLng = fallback.first
-        NotificationProfile.syncLocation(fallback.first)
+        if (userLatLng == null) updateHomeHero()
+        moveCameraTo(fallback.first, fallback.second, animate)
+    }
+
+    private fun moveCameraTo(latLng: LatLng, zoom: Float, animate: Boolean) {
+        if (!::map.isInitialized) return
+        val update = CameraUpdateFactory.newLatLngZoom(latLng, zoom)
+        if (animate) {
+            map.animateCamera(update, 720, null)
+        } else {
+            map.moveCamera(update)
+        }
+    }
+
+    private fun fallbackMapTarget(): LatLng {
+        return when {
+            userLatLng != null -> userLatLng ?: regionalFallback().first
+            ::map.isInitialized -> map.cameraPosition.target
+            else -> regionalFallback().first
+        }
+    }
+
+    private fun moveToProductLocation(latLng: LatLng, animate: Boolean = true) {
+        if (!::map.isInitialized) return
+        moveCameraTo(latLng, PRODUCT_LOCATION_ZOOM, animate)
+    }
+
+    private fun locationToLatLng(location: Location): LatLng {
+        return LatLng(location.latitude, location.longitude)
+    }
+
+    private fun storeFreshUserLocation(location: Location) {
+        val latLng = locationToLatLng(location)
+        userLatLng = latLng
+        NotificationProfile.syncLocation(latLng)
         updateHomeHero()
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(fallback.first, fallback.second))
     }
 
     @SuppressLint("MissingPermission")
@@ -492,13 +661,12 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         }
 
         fusedLocationClient
-            .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token)
+            .getCurrentLocation(locationPriority(), CancellationTokenSource().token)
             .addOnSuccessListener { location ->
-                if (location != null) {
-                    val latLng = LatLng(location.latitude, location.longitude)
-                    if (::map.isInitialized) {
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-                    }
+                if (location != null && isUsableDeviceLocation(location)) {
+                    val latLng = locationToLatLng(location)
+                    storeFreshUserLocation(location)
+                    moveToProductLocation(latLng)
                     showAddProductDialog(latLng)
                 } else {
                     openProductDialogFromLastKnownLocation()
@@ -513,21 +681,22 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
     private fun openProductDialogFromLastKnownLocation() {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
-                val latLng = if (location != null) {
-                    LatLng(location.latitude, location.longitude)
+                val latLng = if (location != null && isRecentLocation(location) && isUsableDeviceLocation(location)) {
+                    storeFreshUserLocation(location)
+                    locationToLatLng(location)
                 } else if (::map.isInitialized) {
-                    map.cameraPosition.target
+                    fallbackMapTarget()
                 } else {
                     regionalFallback().first
                 }
 
                 if (::map.isInitialized) {
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+                    moveToProductLocation(latLng)
                 }
                 showAddProductDialog(latLng)
             }
             .addOnFailureListener {
-                val latLng = if (::map.isInitialized) map.cameraPosition.target else regionalFallback().first
+                val latLng = fallbackMapTarget()
                 showAddProductDialog(latLng)
             }
     }

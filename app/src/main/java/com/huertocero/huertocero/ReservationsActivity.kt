@@ -26,8 +26,10 @@ class ReservationsActivity : HuertoActivity() {
         listView = findViewById(R.id.listReservations)
         tvEmpty = findViewById(R.id.tvEmpty)
         btnBack = findViewById(R.id.btnBack)
+        val reservationsHeader = findViewById<View>(R.id.reservationsHeader)
 
         UiMotion.makePressable(btnBack)
+        UiMotion.reveal(reservationsHeader, listView)
         btnBack.setOnClickListener { finish() }
         loadReservations()
     }
@@ -54,7 +56,8 @@ class ReservationsActivity : HuertoActivity() {
                     override fun getItemId(position: Int) = position.toLong()
 
                     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                        val view = layoutInflater.inflate(R.layout.item_reservation, parent, false)
+                        val isNewView = convertView == null
+                        val view = convertView ?: layoutInflater.inflate(R.layout.item_reservation, parent, false)
 
                         val tv = view.findViewById<TextView>(R.id.tvReservation)
                         val btnDelete = view.findViewById<Button>(R.id.btnDelete)
@@ -66,7 +69,10 @@ class ReservationsActivity : HuertoActivity() {
                         val quantity = doc.getDouble("quantity") ?: 1.0
                         val unit = doc.getString("unit") ?: "kg"
 
-                        UiMotion.makePressable(btnDelete)
+                        UiMotion.makePressable(view, btnDelete)
+                        if (isNewView) {
+                            UiMotion.showSurface(view, fromY = 14f)
+                        }
                         tv.text = "$name - ${
                             MarketFormat.formatMoney(this@ReservationsActivity, price, currency)
                         } - ${

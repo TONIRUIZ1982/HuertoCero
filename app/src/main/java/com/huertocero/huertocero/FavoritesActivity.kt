@@ -26,8 +26,10 @@ class FavoritesActivity : HuertoActivity() {
         listView = findViewById(R.id.listFavorites)
         tvEmpty = findViewById(R.id.tvEmpty)
         btnBack = findViewById(R.id.btnBack)
+        val favoritesHeader = findViewById<View>(R.id.favoritesHeader)
 
         UiMotion.makePressable(btnBack)
+        UiMotion.reveal(favoritesHeader, listView)
         btnBack.setOnClickListener { finish() }
         loadFavorites()
     }
@@ -55,7 +57,8 @@ class FavoritesActivity : HuertoActivity() {
                     override fun getItemId(position: Int) = position.toLong()
 
                     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                        val view = layoutInflater.inflate(R.layout.item_favorite, parent, false)
+                        val isNewView = convertView == null
+                        val view = convertView ?: layoutInflater.inflate(R.layout.item_favorite, parent, false)
                         val name = view.findViewById<TextView>(R.id.tvItemName)
                         val btnDelete = view.findViewById<Button>(R.id.btnDelete)
                         val doc = list[position]
@@ -64,7 +67,10 @@ class FavoritesActivity : HuertoActivity() {
                         val price = doc.getDouble("price") ?: 0.0
                         val currency = doc.getString("currency") ?: "EUR"
 
-                        UiMotion.makePressable(btnDelete)
+                        UiMotion.makePressable(view, btnDelete)
+                        if (isNewView) {
+                            UiMotion.showSurface(view, fromY = 14f)
+                        }
                         name.text = "$productName - ${
                             MarketFormat.formatMoney(this@FavoritesActivity, price, currency)
                         }"

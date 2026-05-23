@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/brand_olive" />
+    <gradient
+        android:angle="315"
+        android:startColor="@color/green_primary"
+        android:centerColor="@color/brand_olive"
+        android:endColor="#0B3F22"
+        android:type="linear" />
     <corners
-        android:topLeftRadius="18dp"
-        android:topRightRadius="18dp"
-        android:bottomLeftRadius="18dp"
-        android:bottomRightRadius="6dp" />
+        android:topLeftRadius="20dp"
+        android:topRightRadius="20dp"
+        android:bottomLeftRadius="20dp"
+        android:bottomRightRadius="8dp" />
     <padding
-        android:left="14dp"
-        android:top="10dp"
-        android:right="14dp"
-        android:bottom="10dp" />
+        android:left="16dp"
+        android:top="12dp"
+        android:right="16dp"
+        android:bottom="12dp" />
 </shape>

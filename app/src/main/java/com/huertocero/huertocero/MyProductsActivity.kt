@@ -36,7 +36,12 @@ class MyProductsActivity : HuertoActivity() {
 
         tvEmpty = findViewById(R.id.tvEmpty)
         val list = findViewById<ListView>(R.id.listMyProducts)
-        findViewById<Button>(R.id.btnBack).setOnClickListener { finish() }
+        val btnBack = findViewById<Button>(R.id.btnBack)
+        val myProductsHeader = findViewById<View>(R.id.myProductsHeader)
+
+        btnBack.setOnClickListener { finish() }
+        UiMotion.makePressable(btnBack)
+        UiMotion.reveal(myProductsHeader, list)
 
         adapter = object : BaseAdapter() {
             override fun getCount(): Int = products.size
@@ -44,6 +49,7 @@ class MyProductsActivity : HuertoActivity() {
             override fun getItemId(position: Int): Long = position.toLong()
 
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val isNewView = convertView == null
                 val view = convertView ?: layoutInflater.inflate(R.layout.item_my_product, parent, false)
                 val product = products[position]
 
@@ -74,6 +80,10 @@ class MyProductsActivity : HuertoActivity() {
                     .load(product.imageUrl.ifEmpty { "https://via.placeholder.com/300" })
                     .into(img)
 
+                UiMotion.makePressable(view, btnEdit, btnDelete)
+                if (isNewView) {
+                    UiMotion.showSurface(view, fromY = 14f)
+                }
                 btnEdit.setOnClickListener { showEditDialog(product) }
                 btnDelete.setOnClickListener { confirmDelete(product) }
 

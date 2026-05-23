@@ -2,24 +2,61 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/auth_card_background"
-    android:elevation="3dp"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@drawable/chat_thread_card_background"
+    android:elevation="5dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="14dp">
+
+    <FrameLayout
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:background="@drawable/chat_thread_icon_background"
+        android:padding="14dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/messages"
+            android:src="@drawable/ic_nav_chat" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="10dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvProductName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/ink"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvLastMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/muted_ink"
+            android:textSize="13sp" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/tvProductName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/ink"
-        android:textSize="17sp"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:background="@drawable/chat_thread_arrow_background"
+        android:gravity="center"
+        android:text=">"
+        android:textColor="@color/brand_olive"
+        android:textSize="24sp"
         android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvLastMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:textColor="@color/muted_ink"
-        android:textSize="14sp" />
 </LinearLayout>

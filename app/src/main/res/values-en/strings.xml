@@ -108,7 +108,7 @@
     <string name="published_products_count">%1$d products published. Tap a marker to view them.</string>
     <string name="map_marker_products">%1$d product(s)</string>
     <string name="location_permission_needed">Enable location to open the map in your city.</string>
-    <string name="location_unavailable">Could not detect your location. Showing Spain.</string>
+    <string name="location_unavailable">Could not detect your exact location. Showing a nearby area for your country.</string>
     <string name="favorite_saved">Saved to favorites</string>
     <string name="product_saved">Product saved</string>
     <string name="fill_name">Enter a name</string>

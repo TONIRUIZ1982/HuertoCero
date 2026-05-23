@@ -30,8 +30,12 @@ class ChatsActivity : HuertoActivity() {
 
         val tvEmpty = findViewById<TextView>(R.id.tvEmpty)
         val listChats = findViewById<ListView>(R.id.listChats)
+        val btnBack = findViewById<Button>(R.id.btnBack)
+        val chatsHeader = findViewById<View>(R.id.chatsHeader)
 
-        findViewById<Button>(R.id.btnBack).setOnClickListener { finish() }
+        btnBack.setOnClickListener { finish() }
+        UiMotion.makePressable(btnBack)
+        UiMotion.reveal(chatsHeader, listChats)
 
         adapter = object : BaseAdapter() {
             override fun getCount(): Int = chats.size
@@ -39,12 +43,17 @@ class ChatsActivity : HuertoActivity() {
             override fun getItemId(position: Int): Long = position.toLong()
 
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val isNewView = convertView == null
                 val view = convertView ?: layoutInflater.inflate(R.layout.item_chat_thread, parent, false)
                 val chat = chats[position]
 
                 view.findViewById<TextView>(R.id.tvProductName).text = chat.productName
                 view.findViewById<TextView>(R.id.tvLastMessage).text =
                     chat.lastMessage.ifEmpty { getString(R.string.conversation_started) }
+                UiMotion.makePressable(view)
+                if (isNewView) {
+                    UiMotion.showSurface(view, fromY = 14f)
+                }
 
                 return view
             }

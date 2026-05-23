@@ -4,44 +4,74 @@
     android:layout_height="match_parent"
     android:background="@drawable/auth_background"
     android:orientation="vertical"
-    android:padding="18dp">
+    android:paddingStart="18dp"
+    android:paddingTop="18dp"
+    android:paddingEnd="18dp"
+    android:paddingBottom="12dp">
 
-    <Button
-        android:id="@+id/btnBack"
-        android:layout_width="120dp"
-        android:layout_height="54dp"
-        android:background="@drawable/button_secondary"
-        android:text="@string/back"
-        android:textAllCaps="false"
-        android:textColor="@color/brand_olive"
-        android:textStyle="bold" />
-
-    <TextView
+    <LinearLayout
+        android:id="@+id/favoritesHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:text="@string/favorites"
-        android:textColor="@color/ink"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+        android:background="@drawable/chat_inbox_header_background"
+        android:elevation="6dp"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="104dp"
+            android:layout_height="48dp"
+            android:background="@drawable/chat_header_button_background"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:text="@string/back"
+            android:textAllCaps="false"
+            android:textColor="@color/brand_olive"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/favorites"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/favorites_subtitle"
+            android:textColor="#DFFFFFFF"
+            android:textSize="14sp" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvEmpty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/chat_empty_background"
         android:gravity="center"
+        android:padding="24dp"
         android:text="@string/favorites_empty"
         android:textColor="@color/muted_ink"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:visibility="gone" />
 
     <ListView
         android:id="@+id/listFavorites"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="18dp"
         android:layout_weight="1"
+        android:cacheColorHint="@android:color/transparent"
+        android:clipToPadding="false"
         android:divider="@android:color/transparent"
-        android:dividerHeight="10dp" />
+        android:dividerHeight="12dp"
+        android:listSelector="@android:color/transparent"
+        android:paddingBottom="18dp" />
 </LinearLayout>

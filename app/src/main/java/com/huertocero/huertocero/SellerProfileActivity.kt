@@ -26,19 +26,24 @@ class SellerProfileActivity : HuertoActivity() {
         setContentView(R.layout.activity_seller_profile)
 
         val sellerId = intent.getStringExtra("sellerId") ?: return finish()
+        val btnBack = findViewById<Button>(R.id.btnBack)
+        val sellerHeader = findViewById<View>(R.id.sellerHeader)
 
-        findViewById<Button>(R.id.btnBack).setOnClickListener { finish() }
+        btnBack.setOnClickListener { finish() }
+        UiMotion.makePressable(btnBack)
         findViewById<TextView>(R.id.tvSellerName).text = getString(R.string.local_producer)
         stats = findViewById(R.id.tvSellerStats)
         empty = findViewById(R.id.tvEmpty)
 
         val list = findViewById<ListView>(R.id.listSellerProducts)
+        UiMotion.reveal(btnBack, sellerHeader, list)
         adapter = object : BaseAdapter() {
             override fun getCount(): Int = products.size
             override fun getItem(position: Int): Product = products[position]
             override fun getItemId(position: Int): Long = position.toLong()
 
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val isNewView = convertView == null
                 val view = convertView ?: layoutInflater.inflate(R.layout.item_seller_product, parent, false)
                 val product = products[position]
 
@@ -54,6 +59,10 @@ class SellerProfileActivity : HuertoActivity() {
                 Glide.with(this@SellerProfileActivity)
                     .load(product.imageUrl.ifEmpty { "https://via.placeholder.com/300" })
                     .into(view.findViewById<ImageView>(R.id.imgProduct))
+                UiMotion.makePressable(view)
+                if (isNewView) {
+                    UiMotion.showSurface(view, fromY = 14f)
+                }
 
                 return view
             }

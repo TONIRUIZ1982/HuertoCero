@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/auth_card_background"
-    android:elevation="4dp"
+    android:background="@drawable/seller_product_card_background"
+    android:elevation="5dp"
     android:orientation="vertical"
     android:padding="14dp">
 
@@ -17,8 +17,9 @@
             android:id="@+id/imgProduct"
             android:layout_width="86dp"
             android:layout_height="86dp"
-            android:background="@drawable/auth_input_background"
+            android:background="@drawable/seller_product_image_background"
             android:contentDescription="@string/product_image"
+            android:padding="2dp"
             android:scaleType="centerCrop" />
 
         <LinearLayout
@@ -40,11 +41,15 @@
 
             <TextView
                 android:id="@+id/tvPrice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/green_primary"
-                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/seller_price_badge_background"
+                android:gravity="center"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textColor="@color/brand_olive"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -63,11 +68,15 @@
 
             <TextView
                 android:id="@+id/tvStock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/seller_section_chip_background"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
                 android:textColor="@color/brand_olive"
-                android:textSize="13sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -91,25 +100,31 @@
         <Button
             android:id="@+id/btnEdit"
             android:layout_width="0dp"
-            android:layout_height="52dp"
+            android:layout_height="50dp"
             android:layout_marginEnd="6dp"
             android:layout_weight="1"
-            android:background="@drawable/button_primary"
+            android:background="@drawable/product_route_button_background"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
             android:text="@string/edit"
             android:textAllCaps="false"
-            android:textColor="@android:color/white"
+            android:textColor="@color/brand_olive"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnDelete"
             android:layout_width="0dp"
-            android:layout_height="52dp"
+            android:layout_height="50dp"
             android:layout_marginStart="6dp"
             android:layout_weight="1"
             android:background="@drawable/button_danger"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
             android:text="@string/delete"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
+            android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

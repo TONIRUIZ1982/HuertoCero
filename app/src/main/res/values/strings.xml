@@ -138,7 +138,7 @@
     <string name="published_products_count">%1$d productos publicados. Toca un marcador para verlos.</string>
     <string name="map_marker_products">%1$d producto(s)</string>
     <string name="location_permission_needed">Activa la ubicacion para abrir el mapa en tu ciudad.</string>
-    <string name="location_unavailable">No se pudo detectar tu ubicacion. Mostrando Espana.</string>
+    <string name="location_unavailable">No se pudo detectar tu ubicacion exacta. Mostrando una zona cercana por pais.</string>
     <string name="favorite_saved">Guardado en favoritos</string>
     <string name="product_saved">Producto guardado</string>
     <string name="fill_name">Introduce nombre</string>
@@ -181,8 +181,12 @@
     <string name="send">Enviar</string>
     <string name="message_hint">Escribe un mensaje</string>
     <string name="messages_empty">Aun no tienes conversaciones</string>
+    <string name="messages_subtitle">Habla con compradores y vendedores sin perder el contexto de cada producto.</string>
+    <string name="chat_secure_subtitle">Chat directo para cerrar reservas con confianza</string>
     <string name="favorites_empty">No tienes favoritos aun</string>
     <string name="reservations_empty">No tienes reservas</string>
+    <string name="favorites_subtitle">Guarda productos interesantes y vuelve rapido cuando quieras reservar.</string>
+    <string name="reservations_subtitle">Controla tus reservas activas antes de que caduquen o se agoten.</string>
     <string name="my_products_subtitle">Edita precios, mejora descripciones y retira productos vendidos.</string>
     <string name="my_products_empty">Aun no has publicado productos</string>
     <string name="save_product">Guardar producto</string>
@@ -201,6 +205,9 @@
     <string name="seller_empty">Este vendedor no tiene productos activos</string>
     <string name="seller_new">Vendedor nuevo</string>
     <string name="seller_pending">Vendedor pendiente de verificar</string>
+    <string name="seller_badge_local">Km0</string>
+    <string name="seller_badge_trust">Confianza</string>
+    <string name="seller_badge_fresh">Fresco</string>
     <string name="seller_rating">Valoracion %1$s/5 (%2$d)</string>
     <string name="seller_stats">%1$s - %2$d productos activos</string>
     <string name="rating_unavailable">Valoracion no disponible</string>
