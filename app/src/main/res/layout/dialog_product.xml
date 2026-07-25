@@ -160,6 +160,20 @@
                 android:textColor="@color/muted_ink"
                 android:textSize="15sp" />
 
+            <TextView
+                android:id="@+id/tvDeliveryInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/category_chip_background"
+                android:paddingStart="12dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="8dp"
+                android:textColor="@color/brand_olive"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

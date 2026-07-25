@@ -24,19 +24,52 @@ function distanceKm(aLat, aLng, bLat, bLng) {
   return 2 * radius * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }
 
-function matchesSavedInterest(profile, product) {
+function matchesExplicitInterest(profile, product) {
   const categoryAlerts = profile.categoryAlerts || [];
   const sellerAlerts = profile.sellerAlerts || [];
   const terms = profile.savedSearchTerms || [];
   const category = product.category || "";
   const sellerId = product.sellerId || "";
   const searchable = `${product.name || ""} ${product.description || ""} ${category}`.toLowerCase();
+  const normalizedCategory = String(category).toLowerCase();
 
   if (sellerId && sellerAlerts.includes(sellerId)) return true;
-  if (category && categoryAlerts.includes(category)) return true;
+  if (category && categoryAlerts.some((item) => String(item).toLowerCase() === normalizedCategory)) return true;
   if (terms.some((term) => term && searchable.includes(String(term).toLowerCase()))) return true;
 
-  return !profile.onlySavedAlerts;
+  return false;
+}
+
+function notificationDateKey(date = new Date()) {
+  return date.toISOString().slice(0, 10);
+}
+
+function timestampToMillis(value) {
+  if (!value) return 0;
+  if (typeof value.toMillis === "function") return value.toMillis();
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function notificationDecision(profile, product) {
+  const explicitMatch = matchesExplicitInterest(profile, product);
+  return {
+    explicitMatch,
+    shouldNotify: explicitMatch || !profile.onlySavedAlerts
+  };
+}
+
+function isNearbyNotificationThrottled(profile, explicitMatch) {
+  const now = Date.now();
+  const today = notificationDateKey();
+  const sameDate = profile.nearbyNotificationsDate === today;
+  const notificationsToday = sameDate ? Number(profile.nearbyNotificationsToday || 0) : 0;
+  const lastNotificationAt = timestampToMillis(profile.lastNearbyNotificationAt);
+  const minGapMs = explicitMatch ? 10 * 60 * 1000 : 30 * 60 * 1000;
+  const dailyLimit = explicitMatch ? 8 : 4;
+
+  if (notificationsToday >= dailyLimit) return true;
+  return lastNotificationAt > 0 && now - lastNotificationAt < minGapMs;
 }
 
 exports.notifyNearbyProduct = onDocumentCreated("products/{productId}", async (event) => {
@@ -59,6 +92,8 @@ exports.notifyNearbyProduct = onDocumentCreated("products/{productId}", async (e
 
   const messages = [];
   const messageProfileRefs = [];
+  const messageProfileMeta = [];
+  const todayKey = notificationDateKey();
   profiles.forEach((doc) => {
     const profile = doc.data() || {};
     const token = profile.fcmToken;
@@ -71,7 +106,9 @@ exports.notifyNearbyProduct = onDocumentCreated("products/{productId}", async (e
 
     const km = distanceKm(userLat, userLng, lat, lng);
     if (km > radiusKm) return;
-    if (!matchesSavedInterest(profile, product)) return;
+    const decision = notificationDecision(profile, product);
+    if (!decision.shouldNotify) return;
+    if (isNearbyNotificationThrottled(profile, decision.explicitMatch)) return;
 
     const productName = product.name || "Producto nuevo";
     messages.push({
@@ -93,21 +130,34 @@ exports.notifyNearbyProduct = onDocumentCreated("products/{productId}", async (e
       }
     });
     messageProfileRefs.push(doc.ref);
+    messageProfileMeta.push({
+      sameDate: profile.nearbyNotificationsDate === todayKey,
+      todayKey
+    });
   });
 
   if (messages.length === 0) return null;
 
   const response = await admin.messaging().sendEach(messages);
   const cleanup = [];
+  const profileUpdates = [];
   response.responses.forEach((result, index) => {
     if (!result.success) {
       const code = result.error && result.error.code;
       if (code === "messaging/registration-token-not-registered") {
         cleanup.push(messageProfileRefs[index].update({ fcmToken: admin.firestore.FieldValue.delete() }));
       }
+      return;
     }
+
+    const meta = messageProfileMeta[index] || {};
+    profileUpdates.push(messageProfileRefs[index].set({
+      lastNearbyNotificationAt: admin.firestore.FieldValue.serverTimestamp(),
+      nearbyNotificationsDate: meta.todayKey || todayKey,
+      nearbyNotificationsToday: meta.sameDate ? admin.firestore.FieldValue.increment(1) : 1
+    }, { merge: true }));
   });
-  await Promise.all(cleanup);
+  await Promise.all([...cleanup, ...profileUpdates]);
   return null;
 });
 

@@ -10,6 +10,17 @@ import java.util.Date
 import java.util.Locale
 
 object EngagementTracker {
+    fun appEvent(event: String, data: Map<String, Any> = emptyMap()) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance().collection("appEvents").add(
+            data + mapOf(
+                "event" to event,
+                "userId" to userId,
+                "createdAt" to FieldValue.serverTimestamp()
+            )
+        )
+    }
+
     fun productEvent(event: String, product: Product) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = FirebaseFirestore.getInstance()
@@ -60,7 +71,13 @@ object EngagementTracker {
             )
     }
 
-    fun saveSearch(query: String, category: String, sortMode: String) {
+    fun saveSearch(
+        query: String,
+        category: String,
+        sortMode: String,
+        sellerType: String? = null,
+        fulfillmentMode: String? = null
+    ) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = FirebaseFirestore.getInstance()
         val cleanQuery = query.trim().lowercase(Locale.getDefault())
@@ -69,17 +86,27 @@ object EngagementTracker {
         } else {
             ProductCategories.normalize(category)
         }
-        val searchId = "${cleanQuery}_${normalizedCategory}_${sortMode}".hashCode().toString()
+        val normalizedSellerType = sellerType?.let { MarketplaceSignals.normalizeSellerType(it) }
+        val normalizedFulfillmentMode = fulfillmentMode?.let { MarketplaceSignals.normalizeFulfillmentMode(it) }
+        val searchId = listOf(
+            cleanQuery,
+            normalizedCategory,
+            sortMode,
+            normalizedSellerType.orEmpty(),
+            normalizedFulfillmentMode.orEmpty()
+        ).joinToString("_").hashCode().toString()
 
         db.collection("users").document(userId)
             .collection("savedSearches").document(searchId)
             .set(
-                mapOf(
-                    "query" to cleanQuery,
-                    "category" to normalizedCategory,
-                    "sortMode" to sortMode,
-                    "updatedAt" to FieldValue.serverTimestamp()
-                )
+                buildMap {
+                    put("query", cleanQuery)
+                    put("category", normalizedCategory)
+                    put("sortMode", sortMode)
+                    normalizedSellerType?.let { put("sellerType", it) }
+                    normalizedFulfillmentMode?.let { put("fulfillmentMode", it) }
+                    put("updatedAt", FieldValue.serverTimestamp())
+                }
             )
 
         val notificationData = mutableMapOf<String, Any>(
@@ -91,6 +118,12 @@ object EngagementTracker {
         }
         if (normalizedCategory != ProductCategories.FILTER_ALL) {
             notificationData["categoryAlerts"] = FieldValue.arrayUnion(normalizedCategory)
+        }
+        normalizedSellerType?.let {
+            notificationData["sellerTypeAlerts"] = FieldValue.arrayUnion(it)
+        }
+        normalizedFulfillmentMode?.let {
+            notificationData["fulfillmentAlerts"] = FieldValue.arrayUnion(it)
         }
 
         db.collection("notificationProfiles").document(userId)

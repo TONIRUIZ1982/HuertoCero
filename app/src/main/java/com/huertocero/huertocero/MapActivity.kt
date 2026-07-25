@@ -99,6 +99,8 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
     private val knownProductIds = mutableSetOf<String>()
     private var hasLoadedInitialProducts = false
     private var selectedCategoryFilter = ProductCategories.FILTER_ALL
+    private var selectedSellerTypeFilter: String? = null
+    private var selectedFulfillmentFilter: String? = null
     private var isMapMode = false
     private var activeSearchQuery = ""
     private var searchSortMode = SearchSort.RELEVANCE
@@ -811,7 +813,13 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
     }
 
     private fun filteredProductsForCurrentCategory(): List<Product> {
-        return filteredProducts(activeSearchQuery, selectedCategoryFilter, searchSortMode)
+        return filteredProducts(
+            activeSearchQuery,
+            selectedCategoryFilter,
+            searchSortMode,
+            selectedSellerTypeFilter,
+            selectedFulfillmentFilter
+        )
     }
 
     private fun showSearchPanel(openFilters: Boolean = false) {
@@ -851,6 +859,39 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         categorySpinner.setSelection(ProductCategories.filters.indexOf(selectedCategoryFilter).coerceAtLeast(0))
         root.addView(categorySpinner, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(48)).apply {
             topMargin = if (openFilters) dp(12) else dp(8)
+        })
+
+        val sellerTypeOptions = listOf<String?>(null) + MarketplaceSignals.sellerTypes
+        val sellerTypeLabels = sellerTypeOptions.map { value ->
+            value?.let { getString(MarketplaceSignals.sellerTypeLabelRes(it)) }
+                ?: getString(R.string.filter_all_sellers)
+        }
+        val sellerTypeSpinner = Spinner(this).apply {
+            adapter = readableSpinnerAdapter(sellerTypeLabels)
+            setSelection(sellerTypeOptions.indexOf(selectedSellerTypeFilter).coerceAtLeast(0))
+        }
+
+        val fulfillmentOptions = listOf<String?>(null) + MarketplaceSignals.fulfillmentModes
+        val fulfillmentLabels = fulfillmentOptions.map { value ->
+            value?.let { getString(MarketplaceSignals.fulfillmentLabelRes(it)) }
+                ?: getString(R.string.filter_all_fulfillment)
+        }
+        val fulfillmentSpinner = Spinner(this).apply {
+            adapter = readableSpinnerAdapter(fulfillmentLabels)
+            setSelection(fulfillmentOptions.indexOf(selectedFulfillmentFilter).coerceAtLeast(0))
+        }
+
+        val marketplaceFilterRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+        }
+        marketplaceFilterRow.addView(sellerTypeSpinner, LinearLayout.LayoutParams(0, dp(48), 1f).apply {
+            marginEnd = dp(6)
+        })
+        marketplaceFilterRow.addView(fulfillmentSpinner, LinearLayout.LayoutParams(0, dp(48), 1f).apply {
+            marginStart = dp(6)
+        })
+        root.addView(marketplaceFilterRow, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(48)).apply {
+            topMargin = dp(8)
         })
 
         val sortRow = LinearLayout(this).apply {
@@ -898,6 +939,21 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
 
         var localSort = if (openFilters && searchSortMode == SearchSort.RELEVANCE) SearchSort.DISTANCE else searchSortMode
         var localCategory = selectedCategoryFilter
+        var localSellerType = selectedSellerTypeFilter
+        var localFulfillment = selectedFulfillmentFilter
+
+        fun refreshSearchResults() {
+            renderSearchResults(
+                input.text?.toString().orEmpty(),
+                localCategory,
+                localSort,
+                localSellerType,
+                localFulfillment,
+                resultTitle,
+                results,
+                dialog
+            )
+        }
 
         fun renderSortChips() {
             sortRow.removeAllViews()
@@ -913,7 +969,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
                         localSort = mode
                         searchSortMode = mode
                         renderSortChips()
-                        renderSearchResults(input.text?.toString().orEmpty(), localCategory, localSort, resultTitle, results, dialog)
+                        refreshSearchResults()
                     }
                 }
                 sortRow.addView(chip)
@@ -925,7 +981,27 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
                 localCategory = ProductCategories.filters.getOrElse(position) { ProductCategories.FILTER_ALL }
                 selectedCategoryFilter = localCategory
                 updateFilterButtonText()
-                renderSearchResults(input.text?.toString().orEmpty(), localCategory, localSort, resultTitle, results, dialog)
+                refreshSearchResults()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        }
+
+        sellerTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                localSellerType = sellerTypeOptions.getOrNull(position)
+                selectedSellerTypeFilter = localSellerType
+                refreshSearchResults()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        }
+
+        fulfillmentSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                localFulfillment = fulfillmentOptions.getOrNull(position)
+                selectedFulfillmentFilter = localFulfillment
+                refreshSearchResults()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) = Unit
@@ -937,7 +1013,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
                 activeSearchQuery = s?.toString().orEmpty()
                 findViewById<TextView?>(R.id.tvSearchText)?.text =
                     activeSearchQuery.takeIf { it.isNotBlank() } ?: getString(R.string.search_placeholder)
-                renderSearchResults(activeSearchQuery, localCategory, localSort, resultTitle, results, dialog)
+                refreshSearchResults()
             }
 
             override fun afterTextChanged(s: Editable?) = Unit
@@ -948,12 +1024,14 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
             val category = ProductCategories.filters.getOrElse(categorySpinner.selectedItemPosition) {
                 ProductCategories.FILTER_ALL
             }
-            EngagementTracker.saveSearch(query, category, localSort.name)
+            val sellerType = sellerTypeOptions.getOrNull(sellerTypeSpinner.selectedItemPosition)
+            val fulfillment = fulfillmentOptions.getOrNull(fulfillmentSpinner.selectedItemPosition)
+            EngagementTracker.saveSearch(query, category, localSort.name, sellerType, fulfillment)
             Toast.makeText(this, getString(R.string.search_alert_saved), Toast.LENGTH_SHORT).show()
         }
 
         renderSortChips()
-        renderSearchResults(activeSearchQuery, localCategory, localSort, resultTitle, results, dialog)
+        refreshSearchResults()
         dialog.setContentView(root)
         dialog.setOnShowListener {
             input.requestFocus()
@@ -981,11 +1059,13 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         query: String,
         category: String,
         sort: SearchSort,
+        sellerTypeFilter: String?,
+        fulfillmentFilter: String?,
         title: TextView,
         container: LinearLayout,
         dialog: BottomSheetDialog
     ) {
-        val products = filteredProducts(query, category, sort)
+        val products = filteredProducts(query, category, sort, sellerTypeFilter, fulfillmentFilter)
         container.removeAllViews()
         title.text = resources.getQuantityString(R.plurals.search_results_count, products.size, products.size)
         renderProductRail(products)
@@ -1079,13 +1159,24 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun filteredProducts(query: String, category: String, sort: SearchSort): List<Product> {
+    private fun filteredProducts(
+        query: String,
+        category: String,
+        sort: SearchSort,
+        sellerTypeFilter: String? = selectedSellerTypeFilter,
+        fulfillmentFilter: String? = selectedFulfillmentFilter
+    ): List<Product> {
         val normalizedQuery = query.trim().lowercase(Locale.getDefault())
         val words = normalizedQuery.split(" ").filter { it.isNotBlank() }
 
         return allProducts.filter {
             category == ProductCategories.FILTER_ALL ||
                 ProductCategories.normalize(it.category) == category
+        }.filter { product ->
+            sellerTypeFilter == null ||
+                product.normalizedSellerType() == MarketplaceSignals.normalizeSellerType(sellerTypeFilter)
+        }.filter { product ->
+            matchesFulfillmentFilter(product, fulfillmentFilter)
         }.filter { product ->
             if (words.isEmpty()) {
                 true
@@ -1094,7 +1185,9 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
                     product.name,
                     product.description,
                     product.category,
-                    product.normalizedUnit()
+                    product.normalizedUnit(),
+                    getString(MarketplaceSignals.sellerTypeLabelRes(product.normalizedSellerType())),
+                    getString(MarketplaceSignals.fulfillmentLabelRes(product.normalizedFulfillmentMode()))
                 ).joinToString(" ").lowercase(Locale.getDefault())
                 words.all { word -> searchable.contains(word) }
             }
@@ -1109,19 +1202,54 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun matchesFulfillmentFilter(product: Product, fulfillmentFilter: String?): Boolean {
+        val filter = fulfillmentFilter?.let { MarketplaceSignals.normalizeFulfillmentMode(it) } ?: return true
+        val productMode = product.normalizedFulfillmentMode()
+        return when (filter) {
+            MarketplaceSignals.FULFILLMENT_PICKUP ->
+                productMode == MarketplaceSignals.FULFILLMENT_PICKUP ||
+                    productMode == MarketplaceSignals.FULFILLMENT_PICKUP_DELIVERY
+            MarketplaceSignals.FULFILLMENT_LOCAL_DELIVERY ->
+                (productMode == MarketplaceSignals.FULFILLMENT_LOCAL_DELIVERY ||
+                    productMode == MarketplaceSignals.FULFILLMENT_PICKUP_DELIVERY) &&
+                    productCanDeliverToCurrentUser(product)
+            MarketplaceSignals.FULFILLMENT_PICKUP_DELIVERY ->
+                productMode == filter && productCanDeliverToCurrentUser(product)
+            else -> productMode == filter
+        }
+    }
+
+    private fun productCanDeliverToCurrentUser(product: Product): Boolean {
+        val distance = distanceKmToProduct(product) ?: return true
+        return distance <= product.getDeliveryRadiusKmAsDouble()
+    }
+
     private fun feedScore(product: Product): Double {
         val scarcityBoost = if (product.getAvailableStock() in 0.1..2.0) 60.0 else 0.0
         val trustBoost = product.getFavoriteCountAsLong() * 4.0 + product.getReservationCountAsLong() * 8.0
-        val followBoost = when {
-            product.sellerId.isNotBlank() && product.sellerId in followedSellerCache -> 80.0
-            ProductCategories.normalize(product.category) in followedCategoryCache -> 45.0
-            else -> 0.0
-        }
+        val followBoost = if (isRecommendedProduct(product)) 85.0 else 0.0
+        val nearbyBoost = distanceKmToProduct(product)?.let { distance ->
+            (18.0 - distance).coerceAtLeast(0.0) * 2.5
+        } ?: 0.0
         val freshnessBoost = product.createdAt?.let {
             val hours = (System.currentTimeMillis() - it.toDate().time) / 3_600_000.0
             (48.0 - hours).coerceAtLeast(0.0)
         } ?: 0.0
-        return scarcityBoost + trustBoost + freshnessBoost + followBoost
+        val unavailablePenalty = if (product.getAvailableStock() <= 0.0) 1_000.0 else 0.0
+        return scarcityBoost + trustBoost + freshnessBoost + followBoost + nearbyBoost - unavailablePenalty
+    }
+
+    private fun isRecommendedProduct(product: Product): Boolean {
+        val followsSeller = product.sellerId.isNotBlank() && product.sellerId in followedSellerCache
+        val followsCategory = ProductCategories.normalize(product.category) in followedCategoryCache
+        return followsSeller || followsCategory
+    }
+
+    private fun nearbyProductCount(products: List<Product>): Int {
+        return products.count { product ->
+            val distance = distanceKmToProduct(product)
+            distance != null && distance <= 8.0
+        }
     }
 
     private fun distanceKmToProduct(product: Product): Double? {
@@ -1159,15 +1287,35 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         }
 
         val todayDrops = products.filter { isFreshToday(it) }.sortedByDescending { feedScore(it) }
+        val recommendedDrops = products.filter { isRecommendedProduct(it) }.sortedByDescending { feedScore(it) }
+        val lowStockCount = products.count { it.getAvailableStock() in 0.1..2.0 }
+        val nearbyCount = nearbyProductCount(products)
         val isDiscoveryHome = activeSearchQuery.isBlank() && selectedCategoryFilter == ProductCategories.FILTER_ALL
-        val displayProducts = if (isDiscoveryHome && todayDrops.isNotEmpty()) {
-            title?.text = getString(R.string.today_near_you)
-            badge?.text = getString(R.string.daily_drop_badge)
-            todayDrops.take(12)
-        } else {
-            title?.text = if (activeSearchQuery.isBlank()) getString(R.string.fresh_nearby) else getString(R.string.search_products_title)
-            badge?.text = getString(R.string.badge_km0)
-            products.take(12)
+        val displayProducts = when {
+            isDiscoveryHome && recommendedDrops.isNotEmpty() -> {
+                title?.text = getString(R.string.home_recommended_title)
+                badge?.text = getString(R.string.badge_recommended)
+                recommendedDrops.take(12)
+            }
+            isDiscoveryHome && todayDrops.isNotEmpty() -> {
+                title?.text = getString(R.string.today_near_you)
+                badge?.text = getString(R.string.daily_drop_badge)
+                todayDrops.take(12)
+            }
+            else -> {
+                title?.text = when {
+                    activeSearchQuery.isNotBlank() -> getString(R.string.search_products_title)
+                    products.isNotEmpty() -> getString(R.string.home_local_discovery_title)
+                    else -> getString(R.string.fresh_nearby)
+                }
+                badge?.text = when {
+                    lowStockCount > 0 -> getString(R.string.badge_low_stock)
+                    nearbyCount > 0 -> getString(R.string.badge_active_count, nearbyCount)
+                    products.isNotEmpty() -> getString(R.string.badge_active_count, products.size)
+                    else -> getString(R.string.badge_km0)
+                }
+                products.take(12)
+            }
         }
         if (displayProducts.isEmpty()) {
             panel.visibility = View.VISIBLE
@@ -1448,6 +1596,9 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         if (product.getReservationCountAsLong() >= 2) {
             parts.add(getString(R.string.recently_reserved))
         }
+        if (product.normalizedFulfillmentMode() != MarketplaceSignals.FULFILLMENT_PICKUP) {
+            parts.add(getString(MarketplaceSignals.fulfillmentBadgeRes(product.normalizedFulfillmentMode())))
+        }
         if (product.getFavoriteCountAsLong() >= 3) {
             parts.add(getString(R.string.high_demand))
         }
@@ -1455,6 +1606,41 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
             parts.add(getString(R.string.only_left, MarketFormat.formatQuantity(this, product.getAvailableStock(), product.normalizedUnit())))
         }
         return parts.joinToString("  -  ")
+    }
+
+    private fun productDetailDescription(product: Product): String {
+        val description = product.description.ifBlank { getString(R.string.no_description) }
+        val signals = listOf(
+            getString(MarketplaceSignals.sellerTypeBadgeRes(product.normalizedSellerType())),
+            getString(MarketplaceSignals.fulfillmentBadgeRes(product.normalizedFulfillmentMode()))
+        )
+        return "$description\n\n${signals.joinToString("  -  ")}"
+    }
+
+    private fun deliveryDetailText(product: Product): String {
+        if (!product.hasLocalDelivery()) {
+            return getString(R.string.pickup_details)
+        }
+
+        val radius = formatDeliveryRadius(product.getDeliveryRadiusKmAsDouble())
+        val fee = product.getDeliveryFeeAsDouble()
+        return if (fee <= 0.0) {
+            getString(R.string.delivery_details_free, radius)
+        } else {
+            getString(
+                R.string.delivery_details_fee,
+                radius,
+                MarketFormat.formatMoney(this, fee, product.normalizedCurrency())
+            )
+        }
+    }
+
+    private fun formatDeliveryRadius(value: Double): String {
+        return if (value == value.toInt().toDouble()) {
+            value.toInt().toString()
+        } else {
+            String.format(Locale.US, "%.1f", value)
+        }
     }
 
     private fun postedAgoLabel(product: Product): String? {
@@ -1477,6 +1663,11 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         val isLowStock = product.getAvailableStock() in 0.1..2.0
 
         if (isFreshToday(product)) badges.add(getString(R.string.new_today) to false)
+        if (isRecommendedProduct(product)) badges.add(getString(R.string.discovery_for_you) to false)
+        badges.add(getString(MarketplaceSignals.sellerTypeBadgeRes(product.normalizedSellerType())) to false)
+        if (product.normalizedFulfillmentMode() != MarketplaceSignals.FULFILLMENT_PICKUP) {
+            badges.add(getString(MarketplaceSignals.fulfillmentBadgeRes(product.normalizedFulfillmentMode())) to false)
+        }
         if (distance != null && distance <= 2.0) badges.add(getString(R.string.badge_nearby) to false)
         if (isLowStock) badges.add(getString(R.string.badge_low_stock) to true)
         if (product.getReservationCountAsLong() >= 2) badges.add(getString(R.string.recently_reserved) to false)
@@ -1540,9 +1731,10 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
     }
 
     private fun shareHuertoCero() {
+        EngagementTracker.appEvent("share_app")
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, getString(R.string.buy_local))
+            putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_text))
         }
         startActivity(Intent.createChooser(intent, getString(R.string.quick_invite)))
     }
@@ -1950,11 +2142,14 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
     }
 
     private fun updateFilterButtonText() {
+        val hasMarketplaceFilters = selectedSellerTypeFilter != null || selectedFulfillmentFilter != null
         findViewById<Button?>(R.id.btnFilter)?.text =
-            if (selectedCategoryFilter == ProductCategories.FILTER_ALL) {
-                getString(R.string.filter_short)
-            } else {
+            if (selectedCategoryFilter != ProductCategories.FILTER_ALL) {
                 filterDisplayName(selectedCategoryFilter)
+            } else if (hasMarketplaceFilters) {
+                getString(R.string.filter_active)
+            } else {
+                getString(R.string.filter_short)
             }
     }
 
@@ -2079,6 +2274,7 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         val img = view.findViewById<ImageView>(R.id.imgProduct)
         val name = view.findViewById<TextView>(R.id.tvName)
         val desc = view.findViewById<TextView>(R.id.tvDescription)
+        val deliveryInfo = view.findViewById<TextView>(R.id.tvDeliveryInfo)
         val price = view.findViewById<TextView>(R.id.tvPrice)
         val stock = view.findViewById<TextView>(R.id.tvStock)
         val swipeHint = view.findViewById<TextView>(R.id.tvSwipeHint)
@@ -2119,7 +2315,8 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
             val product = products[currentIndex]
 
             name.text = product.name
-            desc.text = product.description
+            desc.text = productDetailDescription(product)
+            deliveryInfo.text = deliveryDetailText(product)
             price.text = MarketFormat.formatMoney(this, product.getPriceAsDouble(), product.normalizedCurrency())
             val availableQuantity = MarketFormat.formatQuantity(this, product.getAvailableStock(), product.normalizedUnit())
             val isScarce = product.getAvailableStock() <= 2.0
@@ -2309,12 +2506,76 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         val categorySpinner = view.findViewById<Spinner>(R.id.spinnerCategory)
         val unitSpinner = view.findViewById<Spinner>(R.id.spinnerUnit)
         val currencySpinner = view.findViewById<Spinner>(R.id.spinnerCurrency)
+        val sellerTypeSpinner = view.findViewById<Spinner>(R.id.spinnerSellerType)
+        val fulfillmentSpinner = view.findViewById<Spinner>(R.id.spinnerFulfillmentMode)
+        val suggestedPrice = view.findViewById<TextView>(R.id.tvSuggestedPrice)
+        val deliveryRadius = view.findViewById<EditText>(R.id.etDeliveryRadius)
+        val deliveryFee = view.findViewById<EditText>(R.id.etDeliveryFee)
 
         addProductImagePreview = preview
         addProductImageButton = btnImage
+        deliveryRadius.setText("5")
+        deliveryFee.setText("0")
         configureCategorySpinner(categorySpinner)
         configureSimpleSpinner(unitSpinner, MarketFormat.units)
         configureSimpleSpinner(currencySpinner, MarketFormat.currencies)
+        sellerTypeSpinner.adapter = readableSpinnerAdapter(
+            MarketplaceSignals.sellerTypes.map { getString(MarketplaceSignals.sellerTypeLabelRes(it)) }
+        )
+        fulfillmentSpinner.adapter = readableSpinnerAdapter(
+            MarketplaceSignals.fulfillmentModes.map { getString(MarketplaceSignals.fulfillmentLabelRes(it)) }
+        )
+
+        var currentSuggestedPrice = 0.0
+
+        fun selectedCategory(): String {
+            return ProductCategories.all.getOrElse(categorySpinner.selectedItemPosition) {
+                ProductCategories.OTHER
+            }
+        }
+
+        fun selectedUnit(): String {
+            return MarketFormat.units.getOrElse(unitSpinner.selectedItemPosition) { "kg" }
+        }
+
+        fun selectedCurrency(): String {
+            return MarketFormat.currencies.getOrElse(currencySpinner.selectedItemPosition) { "EUR" }
+        }
+
+        fun updateSuggestedPrice() {
+            val stock = parseDecimalInput(stockTotal.text.toString()) ?: 1.0
+            currentSuggestedPrice = MarketplaceSignals.suggestPrice(selectedCategory(), selectedUnit(), stock)
+            suggestedPrice.text = getString(
+                R.string.suggested_price_value,
+                MarketFormat.formatMoney(this, currentSuggestedPrice, selectedCurrency())
+            )
+        }
+
+        val suggestionWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun afterTextChanged(s: Editable?) {
+                updateSuggestedPrice()
+            }
+        }
+        stockTotal.addTextChangedListener(suggestionWatcher)
+
+        val suggestionSpinnerListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                updateSuggestedPrice()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        }
+        categorySpinner.onItemSelectedListener = suggestionSpinnerListener
+        unitSpinner.onItemSelectedListener = suggestionSpinnerListener
+        currencySpinner.onItemSelectedListener = suggestionSpinnerListener
+
+        suggestedPrice.setOnClickListener {
+            price.setText(String.format(Locale.US, "%.2f", currentSuggestedPrice))
+            price.setSelection(price.text.length)
+        }
+        updateSuggestedPrice()
 
         btnImage.setOnClickListener {
             pickImage.launch("image/*")
@@ -2341,13 +2602,20 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
             fun guardar(limpiar: Boolean) {
                 val nombre = name.text.toString().trim()
                 val descripcion = desc.text.toString().trim()
-                val precio = price.text.toString().toDoubleOrNull() ?: 0.0
-                val stock = stockTotal.text.toString().toDoubleOrNull() ?: 1.0
-                val categoria = ProductCategories.all.getOrElse(categorySpinner.selectedItemPosition) {
-                    ProductCategories.OTHER
+                val precio = parseDecimalInput(price.text.toString()) ?: 0.0
+                val stock = parseDecimalInput(stockTotal.text.toString()) ?: 1.0
+                val categoria = selectedCategory()
+                val unit = selectedUnit()
+                val currency = selectedCurrency()
+                val sellerType = MarketplaceSignals.sellerTypes.getOrElse(sellerTypeSpinner.selectedItemPosition) {
+                    MarketplaceSignals.SELLER_INDIVIDUAL
                 }
-                val unit = MarketFormat.units.getOrElse(unitSpinner.selectedItemPosition) { "kg" }
-                val currency = MarketFormat.currencies.getOrElse(currencySpinner.selectedItemPosition) { "EUR" }
+                val fulfillmentMode = MarketplaceSignals.fulfillmentModes.getOrElse(fulfillmentSpinner.selectedItemPosition) {
+                    MarketplaceSignals.FULFILLMENT_PICKUP
+                }
+                val suggested = currentSuggestedPrice
+                val deliveryRadiusKm = parseDecimalInput(deliveryRadius.text.toString()) ?: 5.0
+                val deliveryFeeValue = parseDecimalInput(deliveryFee.text.toString()) ?: 0.0
 
                 if (nombre.isEmpty() || stock <= 0.0) {
                     Toast.makeText(this, getString(R.string.fill_name), Toast.LENGTH_SHORT).show()
@@ -2364,6 +2632,11 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
                     stockTotal = stock,
                     unit = unit,
                     currency = currency,
+                    sellerType = sellerType,
+                    fulfillmentMode = fulfillmentMode,
+                    suggestedPrice = suggested,
+                    deliveryRadiusKm = deliveryRadiusKm,
+                    deliveryFee = deliveryFeeValue,
                     lat = latLng.latitude,
                     lng = latLng.longitude
                 ) { success ->
@@ -2382,6 +2655,11 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
                         preview.setImageResource(R.drawable.hero_market_global)
                         btnImage.text = getString(R.string.add_image)
                         categorySpinner.setSelection(ProductCategories.all.indexOf(ProductCategories.OTHER))
+                        sellerTypeSpinner.setSelection(0)
+                        fulfillmentSpinner.setSelection(0)
+                        deliveryRadius.setText("5")
+                        deliveryFee.setText("0")
+                        updateSuggestedPrice()
                     } else {
                         dialog.dismiss()
                     }
@@ -2403,6 +2681,11 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         stockTotal: Double,
         unit: String,
         currency: String,
+        sellerType: String,
+        fulfillmentMode: String,
+        suggestedPrice: Double,
+        deliveryRadiusKm: Double,
+        deliveryFee: Double,
         lat: Double,
         lng: Double,
         onComplete: (Boolean) -> Unit
@@ -2424,6 +2707,12 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
                 stockReserved = 0.0,
                 unit = MarketFormat.normalizeUnit(unit),
                 currency = MarketFormat.normalizeCurrency(currency),
+                sellerType = MarketplaceSignals.normalizeSellerType(sellerType),
+                fulfillmentMode = MarketplaceSignals.normalizeFulfillmentMode(fulfillmentMode),
+                isEcoLocal = true,
+                suggestedPrice = suggestedPrice,
+                deliveryRadiusKm = deliveryRadiusKm,
+                deliveryFee = deliveryFee,
                 geoCell = GeoEngagement.geoCell(lat, lng),
                 publishedDateKey = GeoEngagement.todayKey()
             )
@@ -2532,6 +2821,10 @@ class MapActivity : HuertoActivity(), OnMapReadyCallback {
         addAnotherButton.isEnabled = enabled
         saveButton.text = if (enabled) getString(R.string.save) else getString(R.string.saving)
         addAnotherButton.text = if (enabled) getString(R.string.add_another) else getString(R.string.saving)
+    }
+
+    private fun parseDecimalInput(value: String): Double? {
+        return value.trim().replace(',', '.').toDoubleOrNull()
     }
 
     private fun configureCategorySpinner(spinner: Spinner, selectedCategory: String = ProductCategories.OTHER) {

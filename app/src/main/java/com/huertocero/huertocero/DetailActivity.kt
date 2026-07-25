@@ -3,6 +3,7 @@ package com.huertocero.huertocero
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.Locale
 
 class DetailActivity : HuertoActivity() {
 
@@ -25,6 +27,11 @@ class DetailActivity : HuertoActivity() {
         val tvDesc = findViewById<TextView>(R.id.tvDescription)
         val tvPrice = findViewById<TextView>(R.id.tvPrice)
         val tvStock = findViewById<TextView>(R.id.tvStock)
+        val tvSellerBadge = findViewById<TextView>(R.id.tvSellerBadge)
+        val tvFulfillmentBadge = findViewById<TextView>(R.id.tvFulfillmentBadge)
+        val tvEcoBadge = findViewById<TextView>(R.id.tvEcoBadge)
+        val tvReserveNotice = findViewById<TextView>(R.id.tvReserveNotice)
+        val tvDeliveryInfo = findViewById<TextView>(R.id.tvDeliveryInfo)
         val btnNav = findViewById<Button>(R.id.btnNavigate)
         val btnReserve = findViewById<Button>(R.id.btnReserve)
         UiMotion.makePressable(btnNav, btnReserve)
@@ -40,7 +47,7 @@ class DetailActivity : HuertoActivity() {
                 product.id = it.id
 
                 tvName.text = product.name
-                tvDesc.text = product.description
+                tvDesc.text = product.description.ifBlank { getString(R.string.no_description) }
                 tvPrice.text = MarketFormat.formatMoney(this, product.getPriceAsDouble(), product.normalizedCurrency())
                 val available = MarketFormat.formatQuantity(this, product.getAvailableStock(), product.normalizedUnit())
                 tvStock.text = if (product.getAvailableStock() <= 2.0) {
@@ -48,7 +55,26 @@ class DetailActivity : HuertoActivity() {
                 } else {
                     getString(R.string.available_stock, available)
                 }
-                UiMotion.reveal(img, tvName, tvPrice, tvStock, tvDesc, btnNav, btnReserve)
+                tvSellerBadge.text = getString(MarketplaceSignals.sellerTypeBadgeRes(product.normalizedSellerType()))
+                tvFulfillmentBadge.text = getString(MarketplaceSignals.fulfillmentBadgeRes(product.normalizedFulfillmentMode()))
+                tvEcoBadge.text = if (product.isEcoLocal) getString(R.string.badge_km0) else getString(R.string.badge_local)
+                tvReserveNotice.text = getString(R.string.reservation_hold_notice)
+                tvDeliveryInfo.text = buildDeliveryInfo(product)
+                UiMotion.reveal(
+                    img,
+                    tvName,
+                    tvPrice,
+                    tvStock,
+                    tvSellerBadge,
+                    tvFulfillmentBadge,
+                    tvEcoBadge,
+                    tvDesc,
+                    tvReserveNotice,
+                    tvDeliveryInfo,
+                    btnNav,
+                    btnReserve
+                )
+                EngagementTracker.productEvent("view_detail", product)
 
                 Glide.with(this)
                     .load(product.imageUrl.ifEmpty { "https://via.placeholder.com/300" })
@@ -64,6 +90,32 @@ class DetailActivity : HuertoActivity() {
             }
     }
 
+    private fun buildDeliveryInfo(product: Product): String {
+        if (!product.hasLocalDelivery()) {
+            return getString(R.string.pickup_details)
+        }
+
+        val radius = formatRadius(product.getDeliveryRadiusKmAsDouble())
+        val fee = product.getDeliveryFeeAsDouble()
+        return if (fee <= 0.0) {
+            getString(R.string.delivery_details_free, radius)
+        } else {
+            getString(
+                R.string.delivery_details_fee,
+                radius,
+                MarketFormat.formatMoney(this, fee, product.normalizedCurrency())
+            )
+        }
+    }
+
+    private fun formatRadius(value: Double): String {
+        return if (value == value.toInt().toDouble()) {
+            value.toInt().toString()
+        } else {
+            String.format(Locale.US, "%.1f", value)
+        }
+    }
+
     private fun showReserveDialog(product: Product) {
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -72,13 +124,14 @@ class DetailActivity : HuertoActivity() {
         val info = TextView(this).apply {
             text = getString(
                 R.string.description_price,
-                product.description,
+                product.description.ifBlank { getString(R.string.no_description) },
                 MarketFormat.formatMoney(this@DetailActivity, product.getPriceAsDouble(), product.normalizedCurrency())
             )
         }
 
         val input = EditText(this).apply {
             hint = getString(R.string.quantity_hint)
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         }
 
         layout.addView(info)
@@ -89,7 +142,7 @@ class DetailActivity : HuertoActivity() {
             .setView(layout)
             .setPositiveButton(getString(R.string.reserve)) { _, _ ->
                 val buyerId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setPositiveButton
-                val quantity = input.text.toString().toDoubleOrNull()
+                val quantity = input.text.toString().trim().replace(',', '.').toDoubleOrNull()
                 if (quantity == null || quantity <= 0.0) {
                     Toast.makeText(this, getString(R.string.reservation_error_quantity), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
@@ -101,7 +154,12 @@ class DetailActivity : HuertoActivity() {
                     buyerId,
                     quantity
                 ).addOnSuccessListener {
-                    Toast.makeText(this, getString(R.string.product_reserved), Toast.LENGTH_SHORT).show()
+                    EngagementTracker.productEvent("reserve_detail", product)
+                    Toast.makeText(
+                        this,
+                        "${getString(R.string.product_reserved)}. ${getString(R.string.reservation_hold_notice)}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }.addOnFailureListener {
                     Toast.makeText(this, getString(R.string.reservation_error_generic), Toast.LENGTH_SHORT).show()
                 }

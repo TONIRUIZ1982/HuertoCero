@@ -76,6 +76,12 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    match /appEvents/{eventId} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, delete: if signedIn() && resource.data.userId == request.auth.uid;
+      allow update: if false;
+    }
+
     match /reservas/{reservationId} {
       allow read: if signedIn()
         && (resource.data.buyerId == request.auth.uid || resource.data.sellerId == request.auth.uid);

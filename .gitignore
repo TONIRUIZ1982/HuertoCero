@@ -14,3 +14,16 @@
 .cxx
 local.properties
 keystore/
+
+# Local build/runtime artifacts
+**/build/
+node_modules/
+functions/node_modules/
+.firebase/
+tools/
+firepit-log.txt
+google-play-email.png
+
+# Private release/testing helper files
+playstore/testers-huertocero.csv
+.codex-temp/

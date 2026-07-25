@@ -74,6 +74,15 @@
                     android:layout_marginTop="5dp"
                     android:textColor="#DFFFFFFF"
                     android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvSellerTrust"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="2dp"
+                    android:textColor="#EFFFFFFF"
+                    android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -85,6 +94,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/tvSellerBadgePrimary"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="8dp"
@@ -97,6 +107,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvSellerBadgeSecondary"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="8dp"
@@ -109,6 +120,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvSellerBadgeTertiary"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
@@ -116,6 +128,55 @@
                 android:gravity="center"
                 android:text="@string/seller_badge_fresh"
                 android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvSellerMetricProducts"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/product_soft_button_background"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:textColor="@color/brand_olive"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSellerMetricDelivery"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/product_soft_button_background"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:textColor="@color/brand_olive"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSellerMetricAvailable"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:background="@drawable/product_soft_button_background"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:textColor="@color/brand_olive"
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>

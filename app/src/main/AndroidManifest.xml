@@ -35,6 +35,14 @@
         <activity android:name=".ReservationsActivity"/>
         <activity android:name=".ChatsActivity"/>
         <activity android:name=".ChatActivity"/>
+        <activity
+            android:name=".DetailActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="OPEN_PRODUCT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".PrivacyActivity"/>
         <activity android:name=".MyProductsActivity"/>
         <activity android:name=".SellerProfileActivity"/>

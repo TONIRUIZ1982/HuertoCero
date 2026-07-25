@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/homeRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -109,7 +110,7 @@
                 android:gravity="center"
                 android:padding="11dp"
                 android:src="@drawable/ic_search_professional"
-                android:tint="@color/brand_olive" />
+                app:tint="@color/brand_olive" />
 
             <TextView
                 android:id="@+id/tvSearchText"
@@ -409,7 +410,7 @@
                 android:layout_height="23dp"
                 android:contentDescription="@string/nav_home"
                 android:src="@drawable/ic_nav_home"
-                android:tint="@android:color/white" />
+                app:tint="@android:color/white" />
 
             <TextView
                 android:id="@+id/textNavHome"
@@ -444,7 +445,7 @@
                 android:layout_height="23dp"
                 android:contentDescription="@string/nav_messages"
                 android:src="@drawable/ic_nav_chat"
-                android:tint="@color/muted_ink" />
+                app:tint="@color/muted_ink" />
 
             <TextView
                 android:id="@+id/textNavChat"
@@ -479,7 +480,7 @@
                 android:layout_height="23dp"
                 android:contentDescription="@string/nav_profile"
                 android:src="@drawable/ic_nav_profile"
-                android:tint="@color/muted_ink" />
+                app:tint="@color/muted_ink" />
 
             <TextView
                 android:id="@+id/textNavProfile"

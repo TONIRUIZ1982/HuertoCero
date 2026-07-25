@@ -128,7 +128,7 @@
                     android:contentDescription="@string/show_password"
                     android:padding="12dp"
                     android:src="@drawable/ic_eye"
-                    android:tint="@color/muted_ink" />
+                    app:tint="@color/muted_ink" />
             </FrameLayout>
 
             <com.google.android.material.button.MaterialButton

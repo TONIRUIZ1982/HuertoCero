@@ -16,6 +16,12 @@ data class Product(
     var stockReserved: Any = 0.0,
     var unit: String = "kg",
     var currency: String = "EUR",
+    var sellerType: String = MarketplaceSignals.SELLER_INDIVIDUAL,
+    var fulfillmentMode: String = MarketplaceSignals.FULFILLMENT_PICKUP,
+    var isEcoLocal: Boolean = true,
+    var suggestedPrice: Any = 0.0,
+    var deliveryRadiusKm: Any = 5.0,
+    var deliveryFee: Any = 0.0,
     var geoCell: String = "",
     var publishedDateKey: String = "",
     var createdAt: Timestamp? = null,
@@ -41,6 +47,23 @@ data class Product(
     fun normalizedUnit(): String = MarketFormat.normalizeUnit(unit)
 
     fun normalizedCurrency(): String = MarketFormat.normalizeCurrency(currency)
+
+    fun normalizedSellerType(): String = MarketplaceSignals.normalizeSellerType(sellerType)
+
+    fun normalizedFulfillmentMode(): String = MarketplaceSignals.normalizeFulfillmentMode(fulfillmentMode)
+
+    fun getSuggestedPriceAsDouble(): Double = valueAsDouble(suggestedPrice, 0.0)
+
+    fun getDeliveryRadiusKmAsDouble(): Double = valueAsDouble(deliveryRadiusKm, 5.0).coerceAtLeast(0.0)
+
+    fun getDeliveryFeeAsDouble(): Double = valueAsDouble(deliveryFee, 0.0).coerceAtLeast(0.0)
+
+    fun hasLocalDelivery(): Boolean {
+        return normalizedFulfillmentMode() in listOf(
+            MarketplaceSignals.FULFILLMENT_LOCAL_DELIVERY,
+            MarketplaceSignals.FULFILLMENT_PICKUP_DELIVERY
+        )
+    }
 
     fun getFavoriteCountAsLong(): Long = valueAsLong(favoriteCount)
 

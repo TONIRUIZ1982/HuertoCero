@@ -68,7 +68,11 @@ class MyProductsActivity : HuertoActivity() {
                     product.getPriceAsDouble(),
                     product.normalizedCurrency()
                 )
-                category.text = getString(ProductCategories.labelRes(product.category))
+                category.text = listOf(
+                    getString(ProductCategories.labelRes(product.category)),
+                    getString(MarketplaceSignals.sellerTypeBadgeRes(product.normalizedSellerType())),
+                    getString(MarketplaceSignals.fulfillmentBadgeRes(product.normalizedFulfillmentMode()))
+                ).joinToString(" - ")
                 stock.text = getString(
                     R.string.reserved_stock,
                     MarketFormat.formatQuantity(this@MyProductsActivity, product.getStockReservedAsDouble(), product.normalizedUnit()),
@@ -118,14 +122,32 @@ class MyProductsActivity : HuertoActivity() {
         val category = view.findViewById<Spinner>(R.id.spinnerCategory)
         val unit = view.findViewById<Spinner>(R.id.spinnerUnit)
         val currency = view.findViewById<Spinner>(R.id.spinnerCurrency)
+        val sellerType = view.findViewById<Spinner>(R.id.spinnerSellerType)
+        val fulfillmentMode = view.findViewById<Spinner>(R.id.spinnerFulfillmentMode)
+        val deliveryRadius = view.findViewById<EditText>(R.id.etDeliveryRadius)
+        val deliveryFee = view.findViewById<EditText>(R.id.etDeliveryFee)
 
         name.setText(product.name)
         description.setText(product.description)
         price.setText(product.getPriceAsDouble().toString())
         stockTotal.setText(product.getStockTotalAsDouble().toString())
+        deliveryRadius.setText(product.getDeliveryRadiusKmAsDouble().toString())
+        deliveryFee.setText(product.getDeliveryFeeAsDouble().toString())
         configureCategorySpinner(category, product.category)
         configureSimpleSpinner(unit, MarketFormat.units, product.normalizedUnit())
         configureSimpleSpinner(currency, MarketFormat.currencies, product.normalizedCurrency())
+        configureSimpleSpinner(
+            sellerType,
+            MarketplaceSignals.sellerTypes,
+            product.normalizedSellerType(),
+            MarketplaceSignals.sellerTypes.map { getString(MarketplaceSignals.sellerTypeLabelRes(it)) }
+        )
+        configureSimpleSpinner(
+            fulfillmentMode,
+            MarketplaceSignals.fulfillmentModes,
+            product.normalizedFulfillmentMode(),
+            MarketplaceSignals.fulfillmentModes.map { getString(MarketplaceSignals.fulfillmentLabelRes(it)) }
+        )
 
         val dialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.edit_product))
@@ -138,13 +160,21 @@ class MyProductsActivity : HuertoActivity() {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 val newName = name.text.toString().trim()
                 val newDescription = description.text.toString().trim()
-                val newPrice = price.text.toString().toDoubleOrNull()
-                val newStockTotal = stockTotal.text.toString().toDoubleOrNull()
+                val newPrice = parseDecimalInput(price.text.toString())
+                val newStockTotal = parseDecimalInput(stockTotal.text.toString())
                 val newCategory = ProductCategories.all.getOrElse(category.selectedItemPosition) {
                     ProductCategories.OTHER
                 }
                 val newUnit = MarketFormat.units.getOrElse(unit.selectedItemPosition) { "kg" }
                 val newCurrency = MarketFormat.currencies.getOrElse(currency.selectedItemPosition) { "EUR" }
+                val newSellerType = MarketplaceSignals.sellerTypes.getOrElse(sellerType.selectedItemPosition) {
+                    MarketplaceSignals.SELLER_INDIVIDUAL
+                }
+                val newFulfillmentMode = MarketplaceSignals.fulfillmentModes.getOrElse(fulfillmentMode.selectedItemPosition) {
+                    MarketplaceSignals.FULFILLMENT_PICKUP
+                }
+                val newDeliveryRadius = parseDecimalInput(deliveryRadius.text.toString()) ?: product.getDeliveryRadiusKmAsDouble()
+                val newDeliveryFee = parseDecimalInput(deliveryFee.text.toString()) ?: product.getDeliveryFeeAsDouble()
 
                 if (newName.isEmpty() || newPrice == null || newStockTotal == null || newStockTotal <= 0.0) {
                     Toast.makeText(this, getString(R.string.complete_name_price), Toast.LENGTH_SHORT).show()
@@ -161,7 +191,11 @@ class MyProductsActivity : HuertoActivity() {
                             "category" to ProductCategories.normalize(newCategory),
                             "stockTotal" to newStockTotal,
                             "unit" to MarketFormat.normalizeUnit(newUnit),
-                            "currency" to MarketFormat.normalizeCurrency(newCurrency)
+                            "currency" to MarketFormat.normalizeCurrency(newCurrency),
+                            "sellerType" to MarketplaceSignals.normalizeSellerType(newSellerType),
+                            "fulfillmentMode" to MarketplaceSignals.normalizeFulfillmentMode(newFulfillmentMode),
+                            "deliveryRadiusKm" to newDeliveryRadius.coerceAtLeast(0.0),
+                            "deliveryFee" to newDeliveryFee.coerceAtLeast(0.0)
                         )
                     )
                     .addOnSuccessListener {
@@ -206,6 +240,20 @@ class MyProductsActivity : HuertoActivity() {
     private fun configureSimpleSpinner(spinner: Spinner, values: List<String>, selectedValue: String) {
         spinner.adapter = readableSpinnerAdapter(values)
         spinner.setSelection(values.indexOf(selectedValue).coerceAtLeast(0))
+    }
+
+    private fun configureSimpleSpinner(
+        spinner: Spinner,
+        values: List<String>,
+        selectedValue: String,
+        labels: List<String>
+    ) {
+        spinner.adapter = readableSpinnerAdapter(labels)
+        spinner.setSelection(values.indexOf(selectedValue).coerceAtLeast(0))
+    }
+
+    private fun parseDecimalInput(value: String): Double? {
+        return value.trim().replace(',', '.').toDoubleOrNull()
     }
 
     private fun readableSpinnerAdapter(values: List<String>): ArrayAdapter<String> {
