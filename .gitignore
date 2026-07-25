@@ -27,3 +27,4 @@ google-play-email.png
 # Private release/testing helper files
 playstore/testers-huertocero.csv
 .codex-temp/
+bp_update_index.ps1
